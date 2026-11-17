@@ -323,7 +323,7 @@ function enc(o){var b=new TextEncoder().encode(JSON.stringify(o)),s="";for(var i
 function dec(code){var m=String(code).match(/CR1\.([A-Za-z0-9_-]+)/);if(!m)return null;try{var b=m[1].replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return JSON.parse(new TextDecoder().decode(u))}catch(e){return null}}
 
 /* ---------- Google Sheets ---------- */
-var SHEET_URL="";
+var SHEET_URL="https://script.google.com/macros/s/AKfycbxXFBGbTZGtRvNQfnsr6TlV9rHD39X3s8nCDxVW2WrWBEv0-xFvS8YlLNBRThu0-z3yJQ/exec";
 function sheetOn(){return /^https:\/\/script\.google\.com\//.test(SHEET_URL)}
 function sheetGet(params){
   var q=Object.keys(params||{}).map(function(k){return encodeURIComponent(k)+"="+encodeURIComponent(params[k])}).join("&");
