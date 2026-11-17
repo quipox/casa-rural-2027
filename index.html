@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Casa rural 2027 · Enquesta de famílies</title>
+<style>
+:root{--bg:#f6f1e7;--card:#fffdf8;--ink:#2b2a26;--mut:#756f63;--line:#e4dccb;--g:#3f6b4f;--g2:#e3eddf;--t:#c4623a;--t2:#f8e3d7;--y:#e9b44c;--y2:#fbf0d4;--r:#b3402f;--r2:#f6dcd6;--rad:14px}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 80px}
+header{padding:28px 0 8px}
+h1{font:700 28px/1.15 Georgia,"Times New Roman",serif;margin:0 0 6px;color:var(--g)}
+h2{font:700 20px/1.2 Georgia,serif;margin:0 0 4px}
+h3{font-size:15px;margin:18px 0 6px}
+.sub{color:var(--mut);margin:0}
+.tabs{display:flex;gap:6px;margin:18px 0;background:#ece4d1;padding:4px;border-radius:999px}
+.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:999px;font:600 15px system-ui;color:var(--mut);cursor:pointer}
+.tabs button.on{background:var(--card);color:var(--g);box-shadow:0 1px 3px #0002}
+section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:18px;margin:14px 0}
+.num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--g);color:#fff;font:700 14px system-ui;margin-right:8px}
+label.f{display:block;font-weight:600;font-size:14px;margin:12px 0 4px}
+.hint{font-weight:400;color:var(--mut);font-size:13px}
+input[type=text],input[type=tel],input[type=number],input[type=date],textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;font:inherit;color:inherit}
+textarea{min-height:84px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--g);outline-offset:1px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 14px;font:500 14px system-ui;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--g);border-color:var(--g);color:#fff}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
+.stepper button{border:0;background:#f1ebdd;width:42px;height:42px;font-size:20px;cursor:pointer}
+.stepper span{min-width:44px;text-align:center;font-weight:700}
+.kid{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:4px 6px 4px 10px;margin:0 8px 8px 0}
+.kid input{width:58px;padding:6px}
+.kid button{border:0;background:none;color:var(--r);font-size:18px;cursor:pointer}
+.btn{border:0;border-radius:12px;padding:12px 18px;font:700 15px system-ui;cursor:pointer;background:var(--g);color:#fff}
+.btn.sec{background:#fff;color:var(--g);border:1px solid var(--g)}
+.btn.t{background:var(--t)}
+.btn.sm{padding:7px 12px;font-size:13px;border-radius:9px}
+.btn:disabled{opacity:.5}
+.mh{display:flex;justify-content:space-between;align-items:center;margin:20px 0 6px;position:sticky;top:0;background:var(--card);padding:6px 0;z-index:2;border-bottom:1px solid var(--line)}
+.mh b{text-transform:capitalize;font-size:15px}
+.mh .q button{border:0;background:none;color:var(--g);font:600 12px system-ui;cursor:pointer;padding:4px 6px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px dashed var(--line)}
+.row .rl{min-width:0}
+.row .rl b{font-size:15px;display:block}
+.row .rl small{color:var(--t);font-weight:600}
+.row.sp .rl b::before{content:"★ ";color:var(--y)}
+.seg{display:flex;flex:none;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:#fff;width:48px;height:40px;font-size:16px;cursor:pointer;color:var(--mut)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.s1.on{background:var(--g);color:#fff}
+.seg button.s2.on{background:var(--y);color:#3b2d05}
+.seg button.s3.on{background:var(--r);color:#fff}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin:6px 0}
+.legend i{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;margin-right:4px;font-size:13px}
+.out{background:var(--g2);border:1px solid #bcd3b8;border-radius:var(--rad);padding:16px;margin-top:14px}
+.out textarea{font:12px/1.4 ui-monospace,Menlo,monospace;min-height:110px;background:#fff}
+.err{background:var(--r2);color:var(--r);border-radius:10px;padding:10px 12px;margin:12px 0;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:10px 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat b{display:block;font:700 26px Georgia,serif;color:var(--g)}
+.stat span{font-size:13px;color:var(--mut)}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0;font-size:14px}
+.bar .l{flex:0 0 150px}
+.bar .b{flex:1;background:#eee6d4;border-radius:6px;height:14px;overflow:hidden}
+.bar .b i{display:block;height:100%;background:var(--g)}
+.bar .n{flex:0 0 28px;text-align:right;font-weight:700}
+.rank{border:1px solid var(--line);border-radius:12px;padding:12px;margin:8px 0;background:#fff}
+.rank.top{border-color:var(--g);background:#f3f8f1}
+.rank .h{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.rank .sc{font:700 20px Georgia,serif;color:var(--g);white-space:nowrap}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;margin:2px 3px 0 0}
+.pill.ok{background:var(--g2);color:var(--g)}.pill.mb{background:var(--y2);color:#7a5a0b}.pill.no{background:var(--r2);color:var(--r)}
+.fam{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:8px 0;background:#fff;font-size:14px}
+.fam .t{display:flex;justify-content:space-between;gap:8px}
+.fam button.x{border:0;background:none;color:var(--r);cursor:pointer;font-size:13px}
+.muted{color:var(--mut);font-size:14px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#2b2a26;color:#fff;padding:10px 16px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+.toast.on{opacity:1}
+a{color:var(--g)}
+.links{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.links a{border:1px solid var(--g);border-radius:10px;padding:8px 12px;text-decoration:none;font-weight:600;font-size:14px}
+.empty{text-align:center;padding:26px 10px;color:var(--mut)}
+.hidden{display:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:480px){.bar .l{flex-basis:110px}.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🏡 Escapada a una casa rural</h1>
+  <p class="sub">Famílies del grup de Terrassa · 2027</p>
+</header>
+<div class="tabs" role="tablist">
+  <button id="tabF" class="on" data-tab="form">Respondre l'enquesta</button>
+  <button id="tabP" data-tab="panel">Organització</button>
+</div>
+
+<!-- ======================= FORMULARIO ======================= -->
+<div id="viewForm">
+  <section class="card" style="background:var(--g2);border-color:#bcd3b8">
+    <b>Com funciona?</b>
+    <p class="muted" style="margin:6px 0 0">Una persona per família omple això (3 minuts). Al final es genera un missatge amb un codi: copia'l i envia'l per WhatsApp a qui organitza. Aquí no es desa res en cap servidor; només el que tu enviïs.</p>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">1</span>La teva família</h2>
+    <label class="f" for="fam">Nom de la família <span class="hint">(com us coneixem al grup)</span></label>
+    <input type="text" id="fam" placeholder="Ex.: Família Garcia-Puig" autocomplete="off">
+    <div class="two">
+      <div><label class="f" for="contact">Persona de contacte</label><input type="text" id="contact" placeholder="Nom" autocomplete="off"></div>
+      <div><label class="f" for="phone">Telèfon <span class="hint">(opcional)</span></label><input type="tel" id="phone" placeholder="6XX XXX XXX" autocomplete="off"></div>
+    </div>
+    <label class="f">Adults que vindríeu</label>
+    <div class="stepper" data-step="adults"><button type="button" data-d="-1">−</button><span id="adultsV">2</span><button type="button" data-d="1">+</button></div>
+    <label class="f">Nens/es <span class="hint">(afegeix l'edat de cadascun)</span></label>
+    <div id="kids"></div>
+    <button type="button" class="btn sec sm" id="addKid">+ Afegir nen/a</button>
+    <label class="f">Necessitem <span class="hint">(marca el que calgui)</span></label>
+    <div class="chips" data-multi="needs" id="needsChips"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">2</span>Al·lèrgies i dietes</h2>
+    <p class="muted" style="margin:0 0 8px">Important per planificar els àpats.</p>
+    <div class="chips" data-multi="diets" id="dietChips"></div>
+    <label class="f" for="allerTxt">Detalls <span class="hint">(qui i què, p. ex. "Marc, al·lèrgia als fruits secs")</span></label>
+    <textarea id="allerTxt" placeholder="Si no hi ha res, deixa-ho buit"></textarea>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">3</span>Quan us va bé?</h2>
+    <p class="muted" style="margin:0 0 8px">Caps de setmana i ponts de 2027, fins al juliol (festius de Catalunya; confirmeu-ho amb el calendari oficial). Marca només el que de debò podeu; el que deixis sense marcar compta com a "no".</p>
+    <div class="legend"><span><i style="background:var(--g);color:#fff">✓</i>Ens va bé</span><span><i style="background:var(--y)">~</i>Si cal</span><span><i style="background:var(--r);color:#fff">✕</i>No podem</span></div>
+    <label class="f">Durada que preferiu</label>
+    <div class="chips" data-single="nights" id="nightsChips"></div>
+    <div id="dateList"></div>
+    <p class="muted" id="dateCount" style="margin-top:12px"></p>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">4</span>Casa, zona i pressupost</h2>
+    <label class="f">Zones que us abelleixen <span class="hint">(diverses)</span></label>
+    <div class="chips" data-multi="zones" id="zoneChips"></div>
+    <label class="f">Fins a quant de viatge us sembla bé</label>
+    <div class="chips" data-single="travel" id="travelChips"></div>
+    <label class="f">Que la casa tingui <span class="hint">(el que més us importa)</span></label>
+    <div class="chips" data-multi="extras" id="extraChips"></div>
+    <label class="f">Pressupost per família per a l'allotjament <span class="hint">(total de l'estada, sense menjar)</span></label>
+    <div class="chips" data-single="budget" id="budgetChips"></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="num">5</span>Mascotes, cotxe i mobilitat</h2>
+    <label class="f">Gossos que vindrien</label>
+    <div class="stepper" data-step="dogs"><button type="button" data-d="-1">−</button><span id="dogsV">0</span><button type="button" data-d="1">+</button></div>
+    <label class="f" for="petTxt">Altres mascotes <span class="hint">(opcional)</span></label>
+    <input type="text" id="petTxt" placeholder="Ex.: un gat">
+    <label class="f">Cotxe</label>
+    <div class="chips" data-single="car" id="carChips"></div>
+    <div id="seatsBox" class="hidden">
+      <label class="f">Places lliures que us sobren al cotxe</label>
+      <div class="stepper" data-step="seats"><button type="button" data-d="-1">−</button><span id="seatsV">0</span><button type="button" data-d="1">+</button></div>
+    </div>
+    <label class="f" for="mobTxt">Mobilitat o accessibilitat <span class="hint">(escales, cotxet, cadira de rodes…)</span></label>
+    <input type="text" id="mobTxt" placeholder="Opcional">
+  </section>
+
+  <section class="card">
+    <h2><span class="num">6</span>Àpats i repartiment de tasques</h2>
+    <label class="f">Com preferiu organitzar els àpats?</label>
+    <div class="chips" data-single="meals" id="mealChips"></div>
+    <label class="f">M'ofereixo per a <span class="hint">(diverses)</span></label>
+    <div class="chips" data-multi="helps" id="helpChips"></div>
+    <label class="f" for="comm">Algun altre comentari?</label>
+    <textarea id="comm" placeholder="Idees, plans, horaris d'arribada, coses que no us agraden…"></textarea>
+  </section>
+
+  <div id="formErr"></div>
+  <button class="btn" id="gen" style="width:100%;font-size:17px;padding:15px">Generar la meva resposta</button>
+
+  <div id="outBox" class="out hidden">
+    <b>✅ Fet. Ara només falta enviar-ho:</b>
+    <p class="muted" style="margin:6px 0 10px">Prem el botó i enganxa el missatge al WhatsApp de qui organitza (o al grup). Conté un resum i el codi.</p>
+    <textarea id="outTxt" readonly></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button class="btn" id="copyOut">Copiar missatge</button>
+      <button class="btn sec" id="editAgain">Continuar editant</button>
+    </div>
+    <p class="muted" style="margin:10px 0 0">Si canvies alguna cosa, genera de nou i torna-ho a enviar: es quedarà amb l'últim.</p>
+  </div>
+</div>
+
+<!-- ======================= PANEL ======================= -->
+<div id="viewPanel" class="hidden">
+  <section class="card">
+    <h2>1 · Convoca el grup</h2>
+    <div class="two">
+      <div><label class="f" for="orgName">Qui organitza</label><input type="text" id="orgName" placeholder="El teu nom"></div>
+      <div><label class="f" for="deadline">Data límit per respondre</label><input type="date" id="deadline"></div>
+    </div>
+    <label class="f" for="linkTxt">Enllaç d'aquesta pàgina <span class="hint">(enganxa'l aquí, és el de la barra del navegador o el de compartir)</span></label>
+    <input type="text" id="linkTxt" placeholder="https://…">
+    <div style="margin-top:10px"><button class="btn sec sm" id="copyInvite">Copiar missatge per al grup</button></div>
+  </section>
+
+  <section class="card">
+    <h2>2 · Enganxa les respostes</h2>
+    <p class="muted" style="margin:0 0 8px">Enganxa els missatges de WhatsApp tal qual (un o diversos alhora). El codi es detecta automàticament.</p>
+    <textarea id="paste" placeholder="Enganxa aquí…"></textarea>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+      <button class="btn" id="addCodes">Afegir respostes</button>
+      <button class="btn sec" id="demo">Carregar exemple</button>
+      <button class="btn sec" id="clearAll">Buidar</button>
+    </div>
+    <div id="pasteMsg" class="muted" style="margin-top:8px"></div>
+    <p class="muted" style="margin:8px 0 0">Les respostes es desen només en aquest navegador.</p>
+  </section>
+
+  <div id="results"></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+/* ---------- utilidades ---------- */
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function store(k,v){try{if(v===undefined){var r=localStorage.getItem(k);return r?JSON.parse(r):null}localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+function toast(t){var el=$("#toast");el.textContent=t;el.classList.add("on");clearTimeout(toast._t);toast._t=setTimeout(function(){el.classList.remove("on")},2200)}
+function copy(text){
+  var done=function(){toast("Copiado ✓")};
+  var fb=function(){var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){toast("No se pudo copiar: selecciona el texto a mano")}document.body.removeChild(ta)};
+  try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,fb)}else fb()}catch(e){fb()}
+}
+function enc(o){var b=new TextEncoder().encode(JSON.stringify(o)),s="";for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return "CR1."+btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function dec(code){var m=String(code).match(/CR1\.([A-Za-z0-9_-]+)/);if(!m)return null;try{var b=m[1].replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return JSON.parse(new TextDecoder().decode(u))}catch(e){return null}}
+
+/* ---------- calendario 2027 ---------- */
+var MES=["gener","febrer","març","abril","maig","juny","juliol","agost","setembre","octubre","novembre","desembre"];
+var MESS=["gen","febr","març","abr","maig","juny","jul","ag","set","oct","nov","des"];
+var DOW=["dg","dl","dt","dc","dj","dv","ds"];
+function D(m,d){return new Date(2027,m-1,d)}
+function pad(n){return (n<10?"0":"")+n}
+function lab(a,b){
+  var s=DOW[a.getDay()]+" "+a.getDate(),e=DOW[b.getDay()]+" "+b.getDate();
+  if(a.getMonth()===b.getMonth())return s+" – "+e+" "+MESS[b.getMonth()];
+  return s+" "+MESS[a.getMonth()]+" – "+e+" "+MESS[b.getMonth()];
+}
+var SPECIAL=[
+ {id:"ss",s:[3,26],e:[3,29],tag:"Setmana Santa · Divendres Sant i Dilluns de Pasqua"},
+ {id:"pg",s:[5,14],e:[5,17],tag:"Dilluns de Pasqua Granada (festiu només en alguns municipis)"},
+ {id:"sj",s:[6,24],e:[6,27],tag:"Pont de Sant Joan · dijous festiu"}
+];
+var TAGS={"0101":"Cap d\'Any (divendres festiu)"};
+var PERIODS=(function(){
+  var out=[],i,sp;
+  for(i=0;i<SPECIAL.length;i++){sp=SPECIAL[i];out.push({id:sp.id,a:D(sp.s[0],sp.s[1]),b:D(sp.e[0],sp.e[1]),tag:sp.tag,special:true})}
+  var d=D(1,1);
+  while(d.getFullYear()===2027){
+    if(d.getDay()===5){
+      var inside=SPECIAL.some(function(s){return d>=D(s.s[0],s.s[1])&&d<=D(s.e[0],s.e[1])});
+      var key=pad(d.getMonth()+1)+pad(d.getDate());
+      var skip=(d.getMonth()>6);
+      if(!inside&&!skip){var b=new Date(d.getTime());b.setDate(b.getDate()+2);out.push({id:"w"+key,a:new Date(d.getTime()),b:b,tag:TAGS[key]||"",special:false})}
+    }
+    d.setDate(d.getDate()+1);
+  }
+  out.sort(function(x,y){return x.a-y.a});
+  out.forEach(function(p){p.label=lab(p.a,p.b);p.m=p.a.getMonth()});
+  return out;
+})();
+var PBY={};PERIODS.forEach(function(p){PBY[p.id]=p});
+
+/* ---------- opciones ---------- */
+var OPT={
+ needs:[["cuna","Cuna / llit de viatge"],["trona","Trona"],["bano","Banyera o canviador"]],
+ diets:[["celiaco","Celiaquia / sense gluten"],["lactosa","Sense lactosa"],["frutossecos","Fruits secs"],["marisco","Marisc / peix"],["huevo","Ou"],["vegetariano","Vegetarià"],["vegano","Vegà"],["halal","Sense porc / halal"]],
+ nights:[["2","2 nits"],["3","3 nits"],["4","4 o més"],["any","Ens és igual"]],
+ zones:[["pirineo","Pirineu català / Cerdanya"],["garrotxa","Garrotxa / Empordà"],["osona","Osona / Bergadà / Berguedà"],["priorat","Priorat / Terra Alta"],["montseny","Montseny / Guilleries"],["lleida","Prepirineu de Lleida"],["aragon","Pirineu aragonès"],["cerca","A prop de Terrassa (<1 h)"]],
+ travel:[["1h","Fins a 1 h"],["2h","Fins a 2 h"],["3h","Fins a 3 h"],["4h","Fins a 4 h o més"]],
+ extras:[["piscina","Piscina"],["chimenea","Xemeneia / estufa"],["jardin","Jardí tancat"],["juegos","Zona de jocs"],["bbq","Barbacoa"],["spa","Jacuzzi / spa"],["sala","Sala comuna gran"],["rutas","Rutes / riu a prop"],["mascotas","Admet gossos"],["wifi","Bon wifi"]],
+ budget:[["b1","Fins a 150 €"],["b2","150 – 250 €"],["b3","250 – 350 €"],["b4","Més de 350 €"],["b0","Encara no ho sé"]],
+ car:[["si","Hi anirem amb cotxe propi"],["no","Necessitem que ens hi portin"]],
+ meals:[["turnos","Cuinem per torns entre famílies"],["comun","Compra comuna i despeses a mitges"],["cada","Cada família pel seu compte"],["mixto","Mixt: sopars junts, la resta lliure"],["fuera","Restaurant / càtering a prop"]],
+ helps:[["cocinar","Cuinar"],["compra","Fer la compra"],["bbq","Encarregar-me de la barbacoa"],["ninos","Activitats per als nens"],["juegos","Jocs de taula"],["reservas","Gestionar reserves / pagaments"],["playlist","Música i ambient"],["conducir","Portar gent al cotxe"]]
+};
+var BUD_MAX={b1:150,b2:250,b3:350};
+function optLabel(group,id){var a=OPT[group];for(var i=0;i<a.length;i++)if(a[i][0]===id)return a[i][1];return id}
+
+/* ---------- estado del formulario ---------- */
+var S=store("cr1-form")||{};
+function defaults(){return {fam:"",contact:"",phone:"",adults:2,kids:[],needs:[],diets:[],allerTxt:"",nights:"",dates:{},zones:[],travel:"",extras:[],budget:"",dogs:0,petTxt:"",car:"",seats:0,mobTxt:"",meals:"",helps:[],comm:""}}
+(function(){var d=defaults();for(var k in d)if(S[k]===undefined)S[k]=d[k]})();
+function save(){store("cr1-form",S)}
+
+function renderChips(){
+  var map={needs:"#needsChips",diets:"#dietChips",nights:"#nightsChips",zones:"#zoneChips",travel:"#travelChips",extras:"#extraChips",budget:"#budgetChips",car:"#carChips",meals:"#mealChips",helps:"#helpChips"};
+  Object.keys(map).forEach(function(g){
+    var el=$(map[g]);if(!el)return;
+    var multi=Array.isArray(S[g]);
+    el.innerHTML=OPT[g].map(function(o){
+      var on=multi?S[g].indexOf(o[0])>-1:S[g]===o[0];
+      return '<button type="button" class="chip'+(on?" on":"")+'" data-g="'+g+'" data-v="'+o[0]+'" aria-pressed="'+on+'">'+esc(o[1])+'</button>';
+    }).join("");
+  });
+  $("#seatsBox").classList.toggle("hidden",S.car!=="si");
+}
+function renderKids(){
+  $("#kids").innerHTML=S.kids.map(function(a,i){
+    return '<span class="kid">Edat <input type="number" inputmode="numeric" min="0" max="17" value="'+esc(a)+'" data-k="'+i+'" aria-label="Edat del nen '+(i+1)+'"> <button type="button" data-rk="'+i+'" aria-label="Treure">×</button></span>';
+  }).join("");
+}
+function renderDates(){
+  var html="",cur=-1;
+  PERIODS.forEach(function(p){
+    if(p.m!==cur){
+      cur=p.m;
+      html+='<div class="mh"><b>'+MES[cur]+'</b><span class="q"><button type="button" data-all="'+cur+'">Tots ✓</button><button type="button" data-none="'+cur+'">Neteja</button></span></div>';
+    }
+    var v=S.dates[p.id]||0;
+    html+='<div class="row'+(p.special?" sp":"")+'" data-p="'+p.id+'"><div class="rl"><b>'+esc(p.label)+'</b>'+(p.tag?'<small>'+esc(p.tag)+'</small>':"")+'</div><div class="seg">'
+      +'<button type="button" class="s1'+(v===1?" on":"")+'" data-s="1" aria-label="Ens va bé">✓</button>'
+      +'<button type="button" class="s2'+(v===2?" on":"")+'" data-s="2" aria-label="Si cal">~</button>'
+      +'<button type="button" class="s3'+(v===3?" on":"")+'" data-s="3" aria-label="No podem">✕</button></div></div>';
+  });
+  $("#dateList").innerHTML=html;
+  countDates();
+}
+function countDates(){
+  var ok=0,mb=0;for(var k in S.dates){if(S.dates[k]===1)ok++;else if(S.dates[k]===2)mb++}
+  $("#dateCount").textContent=ok+" dates amb ✓ · "+mb+" amb \"si cal\"";
+}
+function renderAll(){
+  $("#fam").value=S.fam;$("#contact").value=S.contact;$("#phone").value=S.phone;
+  $("#adultsV").textContent=S.adults;$("#dogsV").textContent=S.dogs;$("#seatsV").textContent=S.seats;
+  $("#allerTxt").value=S.allerTxt;$("#petTxt").value=S.petTxt;$("#mobTxt").value=S.mobTxt;$("#comm").value=S.comm;
+  renderChips();renderKids();renderDates();
+}
+
+/* ---------- eventos del formulario ---------- */
+var viewForm=$("#viewForm");
+viewForm.addEventListener("input",function(e){
+  var id=e.target.id,map={fam:"fam",contact:"contact",phone:"phone",allerTxt:"allerTxt",petTxt:"petTxt",mobTxt:"mobTxt",comm:"comm"};
+  if(map[id]){S[map[id]]=e.target.value;save()}
+  if(e.target.dataset&&e.target.dataset.k!==undefined){var v=parseInt(e.target.value,10);S.kids[+e.target.dataset.k]=isNaN(v)?0:Math.max(0,Math.min(17,v));save()}
+});
+viewForm.addEventListener("click",function(e){
+  var t=e.target.closest("button");if(!t)return;
+  if(t.dataset.g){
+    var g=t.dataset.g,v=t.dataset.v;
+    if(Array.isArray(S[g])){var i=S[g].indexOf(v);if(i>-1)S[g].splice(i,1);else S[g].push(v)}
+    else S[g]=(S[g]===v?"":v);
+    save();renderChips();return;
+  }
+  var st=t.closest("[data-step]");
+  if(st){var key=st.dataset.step,d=parseInt(t.dataset.d,10),min=key==="adults"?1:0,max=key==="seats"?8:12;S[key]=Math.max(min,Math.min(max,S[key]+d));$("#"+key+"V").textContent=S[key];save();return}
+  if(t.id==="addKid"){if(S.kids.length<12){S.kids.push(5);save();renderKids()}return}
+  if(t.dataset.rk!==undefined){S.kids.splice(+t.dataset.rk,1);save();renderKids();return}
+  if(t.dataset.s){
+    var row=t.closest(".row"),pid=row.dataset.p,val=parseInt(t.dataset.s,10);
+    if(S.dates[pid]===val)delete S.dates[pid];else S.dates[pid]=val;
+    save();
+    $$("button",row).forEach(function(b){b.classList.toggle("on",S.dates[pid]===parseInt(b.dataset.s,10))});
+    countDates();return;
+  }
+  if(t.dataset.all!==undefined||t.dataset.none!==undefined){
+    var m=parseInt(t.dataset.all!==undefined?t.dataset.all:t.dataset.none,10),setv=t.dataset.all!==undefined;
+    PERIODS.forEach(function(p){if(p.m===m){if(setv)S.dates[p.id]=1;else delete S.dates[p.id]}});
+    save();renderDates();
+  }
+});
+
+function summaryText(o){
+  var L=[];
+  L.push("🏡 Casa rural 2027 · "+o.f);
+  L.push("👤 "+o.c+(o.p?" · "+o.p:""));
+  L.push("👨‍👩‍👧 "+o.a+" adult(s)"+(o.k.length?" + "+o.k.length+" nen(s) ("+o.k.join(", ")+" anys)":""));
+  if(o.al.length||o.at)L.push("🍽️ Dietes/al·lèrgies: "+o.al.map(function(x){return optLabel("diets",x)}).concat(o.at?[o.at]:[]).join("; "));
+  L.push("📅 Dates ✓ "+o.ok.length+" · si cal "+o.mb.length);
+  if(o.z.length)L.push("📍 Zones: "+o.z.map(function(x){return optLabel("zones",x)}).join(", "));
+  if(o.b)L.push("💶 Pressupost: "+optLabel("budget",o.b));
+  L.push("");L.push(enc(o));
+  return L.join("\n");
+}
+function buildObj(){
+  var ok=[],mb=[];for(var k in S.dates){if(S.dates[k]===1)ok.push(k);else if(S.dates[k]===2)mb.push(k)}
+  return {f:S.fam.trim(),c:S.contact.trim(),p:S.phone.trim(),a:S.adults,k:S.kids.slice(),nd:S.needs.slice(),al:S.diets.slice(),at:S.allerTxt.trim(),n:S.nights,ok:ok,mb:mb,z:S.zones.slice(),t:S.travel,x:S.extras.slice(),b:S.budget,dg:S.dogs,pt:S.petTxt.trim(),ca:S.car,se:S.seats,mo:S.mobTxt.trim(),me:S.meals,he:S.helps.slice(),co:S.comm.trim(),ts:Date.now()};
+}
+$("#gen").addEventListener("click",function(){
+  var errs=[];
+  if(!S.fam.trim())errs.push("Falta el nom de la família.");
+  if(!S.contact.trim())errs.push("Falta la persona de contacte.");
+  var any=false;for(var k in S.dates){if(S.dates[k]===1||S.dates[k]===2)any=true}
+  if(!any)errs.push("Marca almenys una data amb ✓ o ~.");
+  $("#formErr").innerHTML=errs.length?'<div class="err">'+errs.map(esc).join("<br>")+"</div>":"";
+  if(errs.length){window.scrollTo({top:0,behavior:"smooth"});return}
+  var o=buildObj();
+  $("#outTxt").value=summaryText(o);
+  $("#outBox").classList.remove("hidden");
+  $("#outBox").scrollIntoView({behavior:"smooth",block:"center"});
+});
+$("#copyOut").addEventListener("click",function(){copy($("#outTxt").value)});
+$("#outTxt").addEventListener("focus",function(e){e.target.select()});
+$("#editAgain").addEventListener("click",function(){$("#outBox").classList.add("hidden");window.scrollTo({top:0,behavior:"smooth"})});
+
+/* ---------- pestañas ---------- */
+function showTab(t){
+  var p=t==="panel";
+  $("#viewForm").classList.toggle("hidden",p);$("#viewPanel").classList.toggle("hidden",!p);
+  $("#tabF").classList.toggle("on",!p);$("#tabP").classList.toggle("on",p);
+  if(p)renderPanel();
+  try{history.replaceState(null,"",p?"#organitzacio":"#respondre")}catch(e){}
+}
+$$(".tabs button").forEach(function(b){b.addEventListener("click",function(){showTab(b.dataset.tab)})});
+
+/* ---------- PANEL ---------- */
+var FAMS=store("cr1-fams")||[];
+var CHOSEN=store("cr1-chosen")||"";
+var ORG=store("cr1-org")||{name:"",deadline:"",link:""};
+function saveFams(){store("cr1-fams",FAMS)}
+function normFam(o){
+  if(!o||typeof o!=="object"||!o.f)return null;
+  o.k=Array.isArray(o.k)?o.k:[];o.ok=Array.isArray(o.ok)?o.ok:[];o.mb=Array.isArray(o.mb)?o.mb:[];
+  ["nd","al","z","x","he"].forEach(function(k){o[k]=Array.isArray(o[k])?o[k]:[]});
+  o.a=Math.max(1,parseInt(o.a,10)||1);o.dg=parseInt(o.dg,10)||0;o.se=parseInt(o.se,10)||0;
+  ["c","p","at","pt","mo","co","n","t","b","ca","me"].forEach(function(k){o[k]=o[k]==null?"":String(o[k])});
+  return o;
+}
+function addFromText(txt){
+  var re=/CR1\.[A-Za-z0-9_-]+/g,m,added=0,upd=0,bad=0,seen={};
+  while((m=re.exec(txt))){
+    if(seen[m[0]])continue;seen[m[0]]=1;
+    var o=normFam(dec(m[0]));if(!o){bad++;continue}
+    var key=o.f.toLowerCase()+"|"+o.c.toLowerCase(),idx=-1;
+    FAMS.forEach(function(x,i){if((x.f.toLowerCase()+"|"+x.c.toLowerCase())===key)idx=i});
+    if(idx>-1){FAMS[idx]=o;upd++}else{FAMS.push(o);added++}
+  }
+  saveFams();return {added:added,upd:upd,bad:bad};
+}
+$("#addCodes").addEventListener("click",function(){
+  var t=$("#paste").value;
+  if(!/CR1\./.test(t)){$("#pasteMsg").textContent="No trobo cap codi en aquest text.";return}
+  var r=addFromText(t);
+  $("#pasteMsg").textContent=r.added+" afegida/es"+(r.upd?" · "+r.upd+" actualitzada/es":"")+(r.bad?" · "+r.bad+" codi(s) malmès/os":"");
+  $("#paste").value="";renderPanel();
+});
+$("#clearAll").addEventListener("click",function(){
+  if(!FAMS.length)return;
+  if($("#clearAll").dataset.c!=="1"){$("#clearAll").dataset.c="1";$("#clearAll").textContent="Prem un altre cop per buidar";setTimeout(function(){$("#clearAll").dataset.c="";$("#clearAll").textContent="Buidar"},3000);return}
+  FAMS=[];CHOSEN="";saveFams();store("cr1-chosen","");$("#clearAll").dataset.c="";$("#clearAll").textContent="Buidar";renderPanel();
+});
+$("#demo").addEventListener("click",function(){
+  var ids=PERIODS.map(function(p){return p.id});
+  function pick(a){return a.filter(function(x){return PBY[x]})}
+  var base=[
+   {f:"Família Exemple Martí",c:"Laura",p:"",a:2,k:[4,7],nd:[],al:["frutossecos"],at:"Pau, al·lèrgia als fruits secs",n:"3",ok:["ss","sj","w0409","w0507"],mb:["w0618","w0702"],z:["pirineo","garrotxa"],t:"2h",x:["piscina","chimenea","jardin"],b:"b3",dg:1,pt:"",ca:"si",se:2,mo:"",me:"turnos",he:["cocinar","bbq"],co:"",ts:0},
+   {f:"Família Exemple Ruiz",c:"Jordi",p:"",a:2,k:[2],nd:["cuna"],al:[],at:"",n:"3",ok:["ss","sj","w0409","w0423"],mb:["pg","w0507"],z:["garrotxa","osona"],t:"2h",x:["chimenea","juegos","mascotas"],b:"b2",dg:0,pt:"",ca:"si",se:1,mo:"Cotxet",me:"turnos",he:["compra"],co:"Arribem el divendres tard",ts:0},
+   {f:"Família Exemple Vidal",c:"Marta",p:"",a:2,k:[9,11,13],nd:[],al:["celiaco"],at:"Júlia, celíaca",n:"2",ok:["sj","w0409","w0507","pg"],mb:["ss","w0618"],z:["pirineo","lleida"],t:"3h",x:["piscina","rutas","bbq"],b:"b3",dg:2,pt:"",ca:"si",se:0,mo:"",me:"mixto",he:["juegos","ninos"],co:"",ts:0},
+   {f:"Família Exemple Costa",c:"Anna",p:"",a:1,k:[6],nd:[],al:[],at:"",n:"3",ok:["ss","w0409","w0423","w0618"],mb:["sj","pg"],z:["montseny","cerca"],t:"1h",x:["chimenea","jardin"],b:"b1",dg:0,pt:"Un gat (es queda a casa)",ca:"no",se:0,mo:"",me:"comun",he:["reservas"],co:"Pressupost ajustat, si us plau",ts:0}
+  ];
+  base.forEach(function(o){
+    var codes=enc(o);addFromText(codes);
+  });
+  renderPanel();
+});
+
+function count(arrOfArr){var m={};arrOfArr.forEach(function(a){a.forEach(function(x){m[x]=(m[x]||0)+1})});return m}
+function barsHTML(map,group,total){
+  var keys=Object.keys(map).sort(function(a,b){return map[b]-map[a]});
+  if(!keys.length)return '<p class="muted">Sense dades.</p>';
+  return keys.map(function(k){var n=map[k];return '<div class="bar"><span class="l">'+esc(optLabel(group,k))+'</span><span class="b"><i style="width:'+Math.round(100*n/Math.max(total,1))+'%"></i></span><span class="n">'+n+"</span></div>"}).join("");
+}
+function names(list){return list.map(function(f){return esc(f.f.replace(/^Fam[ií]lia\s+/i,""))}).join(", ")}
+
+function analyze(){
+  return PERIODS.map(function(p){
+    var ok=[],mb=[],no=[];
+    FAMS.forEach(function(f){if(f.ok.indexOf(p.id)>-1)ok.push(f);else if(f.mb.indexOf(p.id)>-1)mb.push(f);else no.push(f)});
+    return {p:p,ok:ok,mb:mb,no:no,score:ok.length*2+mb.length};
+  });
+}
+function peopleOf(list){var a=0,k=0,b=0;list.forEach(function(f){a+=f.a;k+=f.k.length;f.k.forEach(function(x){if(x<3)b++})});return {a:a,k:k,b:b,t:a+k}}
+
+function renderPanel(){
+  $("#orgName").value=ORG.name||"";$("#deadline").value=ORG.deadline||"";$("#linkTxt").value=ORG.link||"";
+  var R=$("#results");
+  if(!FAMS.length){R.innerHTML='<section class="card empty"><b>Encara no hi ha respostes</b><br>Quan les famílies t\'enviïn el seu missatge, enganxa\'l a dalt. Pots provar el tauler amb dades d\'exemple.</section>';return}
+  var an=analyze(),pp=peopleOf(FAMS),n=FAMS.length;
+  var h="";
+  h+='<section class="card"><h2>3 · Resum</h2><div class="stats">'
+    +'<div class="stat"><b>'+n+'</b><span>famílies</span></div><div class="stat"><b>'+pp.a+'</b><span>adults</span></div><div class="stat"><b>'+pp.k+'</b><span>nens/es</span></div><div class="stat"><b>'+pp.t+'</b><span>persones en total</span></div></div>';
+  h+='<h3>Famílies que han respost</h3>';
+  FAMS.forEach(function(f,i){
+    var diets=f.al.map(function(x){return optLabel("diets",x)}).concat(f.at?[f.at]:[]).join("; ");
+    h+='<div class="fam"><div class="t"><b>'+esc(f.f)+'</b><button class="x" data-rm="'+i+'">Treure</button></div>'
+      +'<div class="muted">'+esc(f.c)+(f.p?" · "+esc(f.p):"")+' · '+f.a+' adult(s)'+(f.k.length?', '+f.k.length+' nen(s) ('+f.k.join(", ")+' anys)':"")+'</div>'
+      +(diets?'<div>🍽️ '+esc(diets)+'</div>':"")
+      +(f.nd.length?'<div>🍼 '+f.nd.map(function(x){return esc(optLabel("needs",x))}).join(", ")+'</div>':"")
+      +(f.mo?'<div>♿ '+esc(f.mo)+'</div>':"")
+      +(f.co?'<div>💬 '+esc(f.co)+'</div>':"")+'</div>';
+  });
+  h+='</section>';
+
+  var ranked=an.slice().sort(function(a,b){return b.score-a.score||a.p.a-b.p.a});
+  h+='<section class="card"><h2>4 · Millors dates</h2><p class="muted" style="margin:0 0 6px">Puntuació: 2 per cada "ens va bé", 1 per cada "si cal". Les no marcades compten com a "no".</p>';
+  ranked.slice(0,6).forEach(function(r,i){
+    h+=rankHTML(r,i===0,n);
+  });
+  var rest=ranked.slice(6).filter(function(r){return r.score>0});
+  if(rest.length){h+='<details style="margin-top:10px"><summary class="muted" style="cursor:pointer">Veure la resta de dates amb alguna resposta ('+rest.length+')</summary>'+rest.map(function(r){return rankHTML(r,false,n)}).join("")+'</details>'}
+  h+='</section>';
+
+  h+='<section class="card"><h2>5 · Preferències del grup</h2>';
+  h+='<h3>Durada</h3>'+barsHTML(count(FAMS.map(function(f){return f.n?[f.n]:[]})),"nights",n);
+  h+='<h3>Zones</h3>'+barsHTML(count(FAMS.map(function(f){return f.z})),"zones",n);
+  h+='<h3>Viatge màxim</h3>'+barsHTML(count(FAMS.map(function(f){return f.t?[f.t]:[]})),"travel",n);
+  h+='<h3>Què ha de tenir la casa</h3>'+barsHTML(count(FAMS.map(function(f){return f.x})),"extras",n);
+  h+='<h3>Pressupost per família</h3>'+barsHTML(count(FAMS.map(function(f){return f.b?[f.b]:[]})),"budget",n);
+  h+='<h3>Àpats</h3>'+barsHTML(count(FAMS.map(function(f){return f.me?[f.me]:[]})),"meals",n);
+  var h2={};FAMS.forEach(function(f){f.he.forEach(function(x){(h2[x]=h2[x]||[]).push(f.f.replace(/^Fam[ií]lia\s+/i,""))})});
+  h+='<h3>Voluntaris</h3>'+(Object.keys(h2).length?Object.keys(h2).map(function(k){return '<div class="bar" style="align-items:flex-start"><span class="l"><b>'+esc(optLabel("helps",k))+'</b></span><span style="flex:1">'+esc(h2[k].join(", "))+'</span></div>'}).join(""):'<p class="muted">Sense dades.</p>');
+  var dogs=0,cars=0,seats=0,noCar=0;FAMS.forEach(function(f){dogs+=f.dg;if(f.ca==="si"){cars++;seats+=f.se}else if(f.ca==="no")noCar++});
+  h+='<h3>Logística</h3><div class="stats"><div class="stat"><b>'+dogs+'</b><span>gossos</span></div><div class="stat"><b>'+cars+'</b><span>cotxes</span></div><div class="stat"><b>'+seats+'</b><span>places lliures</span></div><div class="stat"><b>'+noCar+'</b><span>famílies sense cotxe</span></div></div>';
+  h+='</section>';
+
+  if(CHOSEN&&PBY[CHOSEN])h+=phase2HTML(an);
+  R.innerHTML=h;
+  if(CHOSEN&&PBY[CHOSEN])bindPhase2(an);
+}
+function rankHTML(r,top,n){
+  var chosen=CHOSEN===r.p.id;
+  return '<div class="rank'+(top?" top":"")+'"><div class="h"><div><b>'+esc(r.p.label)+'</b>'+(r.p.tag?'<div class="muted">'+esc(r.p.tag)+'</div>':"")+'</div><div class="sc">'+r.ok.length+'/'+n+'</div></div>'
+    +'<div>'+(r.ok.length?'<span class="pill ok">✓ '+names(r.ok)+'</span>':"")+(r.mb.length?'<span class="pill mb">~ '+names(r.mb)+'</span>':"")+(r.no.length?'<span class="pill no">✕ '+names(r.no)+'</span>':"")+'</div>'
+    +'<div style="margin-top:8px"><button class="btn sm '+(chosen?"":"sec")+'" data-pick="'+r.p.id+'">'+(chosen?"✓ Data triada":"Triar aquesta data")+'</button></div></div>';
+}
+
+/* ---------- Fase 2: buscar casa ---------- */
+function phase2HTML(an){
+  var r=an.filter(function(x){return x.p.id===CHOSEN})[0];
+  var att=r.ok.concat(r.mb),pp=peopleOf(att);
+  var caps=att.map(function(f){return BUD_MAX[f.b]}).filter(function(x){return x});
+  var cap=caps.length?Math.min.apply(null,caps):null;
+  var hasUnknown=att.some(function(f){return f.b==="b4"});
+  var ex=count(att.map(function(f){return f.x}));
+  var exTop=Object.keys(ex).sort(function(a,b){return ex[b]-ex[a]}).slice(0,6);
+  var zn=count(att.map(function(f){return f.z}));
+  var znTop=Object.keys(zn).sort(function(a,b){return zn[b]-zn[a]}).slice(0,3);
+  var tr=att.map(function(f){return f.t}).filter(Boolean).sort();
+  var dogs=0;att.forEach(function(f){dogs+=f.dg});
+  var cunas=att.filter(function(f){return f.nd.indexOf("cuna")>-1}).length;
+  var tronas=att.filter(function(f){return f.nd.indexOf("trona")>-1}).length;
+  var diets=[];att.forEach(function(f){f.al.forEach(function(x){if(diets.indexOf(x)<0)diets.push(x)})});
+  var mob=att.filter(function(f){return f.mo}).map(function(f){return f.f+": "+f.mo});
+  var nights=count(att.map(function(f){return f.n?[f.n]:[]}));
+  var nTop=Object.keys(nights).sort(function(a,b){return nights[b]-nights[a]})[0];
+  var brief=[];
+  brief.push("BRIEFING PER BUSCAR CASA RURAL");
+  brief.push("Data: "+r.p.label+" de 2027"+(r.p.tag?" ("+r.p.tag+")":""));
+  brief.push("Durada preferida: "+(nTop?optLabel("nights",nTop):"sense definir"));
+  brief.push("Famílies: "+att.length+" · Persones: "+pp.t+" ("+pp.a+" adults, "+pp.k+" nens"+(pp.b?", "+pp.b+" menors de 3":"")+")");
+  brief.push("Dormitoris: mínim "+att.length+" (un per família) · Places: "+pp.t+" + marge");
+  if(cunas||tronas)brief.push("Cunes: "+cunas+" · Trones: "+tronas);
+  brief.push("Gossos: "+dogs+(dogs?" (la casa els ha d\'admetre)":""));
+  if(znTop.length)brief.push("Zones: "+znTop.map(function(z){return optLabel("zones",z)}).join("; "));
+  if(tr.length)brief.push("Viatge màxim (el més restrictiu): "+optLabel("travel",tr[0]));
+  if(exTop.length)brief.push("Imprescindibles/desitjables: "+exTop.map(function(x){return optLabel("extras",x)+" ("+ex[x]+")"}).join(", "));
+  if(cap)brief.push("Pressupost: fins a "+cap+" € per família → casa fins a ~"+(cap*att.length)+" € en total");
+  else if(hasUnknown)brief.push("Pressupost: sense límit definit");
+  if(diets.length)brief.push("Dietes: "+diets.map(function(x){return optLabel("diets",x)}).join(", ")+" (cuina equipada)");
+  mob.forEach(function(m){brief.push("Accessibilitat · "+m)});
+  var briefTxt=brief.join("\n");
+  var h='<section class="card" style="border-color:var(--t)"><h2>6 · Fase 2: buscar casa</h2>'
+    +'<p class="muted" style="margin:0 0 8px">Data triada: <b>'+esc(r.p.label)+'</b>. Els requisits surten de les '+att.length+' famílies que poden (✓ o ~).</p>'
+    +'<div class="stats"><div class="stat"><b>'+att.length+'</b><span>dormitoris mínim</span></div><div class="stat"><b>'+pp.t+'</b><span>places</span></div><div class="stat"><b>'+(cap?cap+" €":"—")+'</b><span>límit per família</span></div><div class="stat"><b>'+dogs+'</b><span>gossos</span></div></div>'
+    +'<textarea readonly id="briefTxt" style="min-height:190px;font:13px/1.45 ui-monospace,Menlo,monospace">'+esc(briefTxt)+'</textarea>'
+    +'<div style="margin:10px 0"><button class="btn t" id="copyBrief">Copiar briefing</button></div>'
+    +'<h3>On buscar</h3><div class="links"><a href="https://www.escapadarural.com" target="_blank" rel="noopener">EscapadaRural</a><a href="https://www.toprural.com" target="_blank" rel="noopener">TopRural</a><a href="https://www.clubrural.com" target="_blank" rel="noopener">ClubRural</a><a href="https://www.airbnb.es" target="_blank" rel="noopener">Airbnb</a><a href="https://www.booking.com" target="_blank" rel="noopener">Booking</a></div>'
+    +'<h3>Abans de reservar</h3><ul class="muted" style="margin:0;padding-left:20px"><li>Preseleccionar 3–5 cases i votar entre totes les famílies.</li><li>Preguntar per la política de nens, gossos i soroll, i per la roba de llit per a tothom.</li><li>Confirmar la cancel·lació flexible i quant és el senyal.</li><li>Un únic responsable de la reserva; la resta li fa un Bizum de la seva part.</li></ul>'
+    +'<h3>Calculadora de repartiment de l\'allotjament</h3>'
+    +'<div class="two"><div><label class="f" for="costTot">Preu total de la casa (€)</label><input type="number" id="costTot" inputmode="decimal" min="0" placeholder="Ex.: 1200"></div>'
+    +'<div><label class="f" for="costMode">Com repartir</label><select id="costMode"><option value="fam">Per família, a parts iguals</option><option value="pers">Per persona (nens &lt;3 gratis, 3–11 a meitat)</option><option value="ad">Per adult (nens gratis)</option></select></div></div>'
+    +'<div id="costOut" style="margin-top:10px"></div></section>';
+  return h;
+}
+function bindPhase2(an){
+  var r=an.filter(function(x){return x.p.id===CHOSEN})[0],att=r.ok.concat(r.mb);
+  function calc(){
+    var tot=parseFloat($("#costTot").value),mode=$("#costMode").value;
+    if(!(tot>0)){$("#costOut").innerHTML="";return}
+    var w=att.map(function(f){
+      if(mode==="fam")return 1;
+      var s=f.a;
+      if(mode==="pers")f.k.forEach(function(x){s+=x<3?0:(x<12?0.5:1)});
+      return s;
+    });
+    var sum=w.reduce(function(a,b){return a+b},0);
+    $("#costOut").innerHTML=att.map(function(f,i){return '<div class="bar"><span class="l" style="flex:1">'+esc(f.f)+'</span><span class="n" style="flex:0 0 90px"><b>'+(tot*w[i]/sum).toFixed(2).replace(".",",")+" €</b></span></div>"}).join("");
+  }
+  $("#costTot").addEventListener("input",calc);$("#costMode").addEventListener("change",calc);
+  $("#copyBrief").addEventListener("click",function(){copy($("#briefTxt").value)});
+}
+
+/* ---------- eventos panel ---------- */
+$("#results").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;
+  if(b.dataset.rm!==undefined){FAMS.splice(+b.dataset.rm,1);saveFams();renderPanel();return}
+  if(b.dataset.pick){CHOSEN=(CHOSEN===b.dataset.pick?"":b.dataset.pick);store("cr1-chosen",CHOSEN);renderPanel();if(CHOSEN)setTimeout(function(){var el=$("#briefTxt");if(el)el.scrollIntoView({behavior:"smooth",block:"center"})},50)}
+});
+function saveOrg(){ORG={name:$("#orgName").value,deadline:$("#deadline").value,link:$("#linkTxt").value};store("cr1-org",ORG)}
+["orgName","deadline","linkTxt"].forEach(function(id){$("#"+id).addEventListener("input",saveOrg)});
+$("#copyInvite").addEventListener("click",function(){
+  saveOrg();
+  var dl="";
+  if(ORG.deadline){var p=ORG.deadline.split("-");if(p.length===3){var mn=MES[parseInt(p[1],10)-1];dl=parseInt(p[2],10)+(/^[aeiou]/.test(mn)?" d'":" de ")+mn}}
+  var t="Hola a tots! 🏡\nVolem muntar una escapada a una casa rural amb les famílies del grup el 2027. Per trobar data i casa que ens encaixi a tots, ompliu aquesta enquesta (3 minuts, una per família):\n\n"
+    +(ORG.link||"[enllaç]")+"\n\nAl final us genera un missatge amb un codi: copieu-lo i envieu-me\'l per WhatsApp."
+    +(dl?"\n\n⏰ Us demano que respongueu abans del "+dl+".":"")
+    +"\n\nQuan tinguem data, ens posem amb la casa. Gràcies!"+(ORG.name?"\n— "+ORG.name:"");
+  copy(t);
+});
+
+/* ---------- arranque ---------- */
+renderAll();
+showTab(location.hash==="#organitzacio"?"panel":"form");
+window.addEventListener("hashchange",function(){showTab(location.hash==="#organitzacio"?"panel":"form")});
+})();
+</script>
+</body>
+</html>
