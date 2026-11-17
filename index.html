@@ -3,15 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Casa rural 2027 · Enquesta de famílies</title>
+<title>Pitxi Escapada Rural 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f1e7;--card:#fffdf8;--ink:#2b2a26;--mut:#756f63;--line:#e4dccb;--g:#3f6b4f;--g2:#e3eddf;--t:#c4623a;--t2:#f8e3d7;--y:#e9b44c;--y2:#fbf0d4;--r:#b3402f;--r2:#f6dcd6;--rad:14px}
+:root{--bg:#f3ece0;--card:#fffcf6;--ink:#231f1b;--mut:#6f665a;--line:#e3d7c3;--g:#25466b;--g2:#e5ebf3;--t:#c8442f;--t2:#f8e1da;--y:#d9a23a;--y2:#f8eed6;--r:#b0342a;--r2:#f6dcd6;--rad:6px;--shu:#c8442f;--ai:#25466b;--matcha:#6b8a3e}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .wrap{max-width:760px;margin:0 auto;padding:0 16px 80px}
 header{padding:28px 0 8px}
-h1{font:700 28px/1.15 Georgia,"Times New Roman",serif;margin:0 0 6px;color:var(--g)}
+h1{font:800 30px/1.15 "Shippori Mincho B1",Georgia,serif;margin:0 0 6px;color:#fff;letter-spacing:.02em}
 h2{font:700 20px/1.2 Georgia,serif;margin:0 0 4px}
 h3{font-size:15px;margin:18px 0 6px}
 .sub{color:var(--mut);margin:0}
@@ -86,14 +88,66 @@ a{color:var(--g)}
 .hidden{display:none}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:480px){.bar .l{flex-basis:110px}.two{grid-template-columns:1fr}}
+
+/* ===== toques japoneses ===== */
+body{font-family:"Zen Kaku Gothic New",system-ui,-apple-system,"Segoe UI",sans-serif;
+ background-color:var(--bg);
+ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40' viewBox='0 0 80 40'%3E%3Cg fill='none' stroke='%2325466b' stroke-opacity='.07' stroke-width='1.5'%3E%3Cpath d='M0 40a40 40 0 0 1 80 0M10 40a30 30 0 0 1 60 0M20 40a20 20 0 0 1 40 0M30 40a10 10 0 0 1 20 0'/%3E%3Cpath d='M-40 20a40 40 0 0 1 80 0M-30 20a30 30 0 0 1 60 0M-20 20a20 20 0 0 1 40 0M40 20a40 40 0 0 1 80 0M50 20a30 30 0 0 1 60 0M60 20a20 20 0 0 1 40 0'/%3E%3C/g%3E%3C/svg%3E");}
+h2,h3,.stat b,.rank .sc,.mh b{font-family:"Shippori Mincho B1",Georgia,serif}
+h2{font-weight:800;color:var(--ink);display:flex;align-items:center}
+.hero{position:relative;overflow:hidden;margin:16px 0 0;padding:26px 22px 54px;border-radius:10px;background:linear-gradient(180deg,#2b5280 0%,#25466b 55%,#1c3757 100%);color:#fff;box-shadow:0 6px 18px #25466b33}
+.hero .scene{position:absolute;inset:auto 0 0 0;width:100%;height:150px;opacity:.95}
+.hero>*:not(.scene):not(.wave){position:relative;z-index:1}
+.hero .kicker{margin:0 0 4px;font:500 13px "Zen Kaku Gothic New",sans-serif;letter-spacing:.35em;color:#f3d9b0;opacity:.9}
+.hero .sub{color:#e7ddcc;margin:0;font-size:15px}
+.hero .wave{position:absolute;left:0;right:0;bottom:0;height:26px;z-index:1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'%3E%3Cg fill='%23f3ece0' stroke='%2325466b' stroke-width='1.2'%3E%3Cpath d='M0 20a20 20 0 0 1 40 0Z'/%3E%3Cpath d='M5 20a15 15 0 0 1 30 0' fill='none'/%3E%3Cpath d='M10 20a10 10 0 0 1 20 0' fill='none'/%3E%3Cpath d='M15 20a5 5 0 0 1 10 0' fill='none'/%3E%3C/g%3E%3C/svg%3E");background-size:40px 20px;background-repeat:repeat-x;background-position:bottom}
+.hanko{position:absolute!important;top:18px;right:18px;width:58px;height:58px;display:grid;place-items:center;border:3px solid #fff;border-radius:8px;background:var(--shu);color:#fff;font:800 32px "Shippori Mincho B1",serif;transform:rotate(-6deg);box-shadow:0 2px 0 #0003;opacity:.95}
+.tabs{background:#e7dcc8;border-radius:6px;border:1px solid var(--line)}
+.tabs button{font-family:inherit;border-radius:4px}
+.tabs button.on{background:var(--ai);color:#fff;box-shadow:none}
+section.card{border-radius:var(--rad);box-shadow:0 1px 0 #0000000a,0 8px 20px -14px #25466b55;border-top:3px solid var(--ai);position:relative}
+section.card::after{content:"";position:absolute;top:10px;right:12px;width:10px;height:10px;border-radius:50%;background:var(--shu);opacity:.85}
+.num{width:30px;height:30px;border-radius:5px;background:var(--shu);font:800 17px "Shippori Mincho B1",serif;transform:rotate(-4deg);margin-right:10px;flex:none}
+.chip{border-radius:4px;font-family:inherit}
+.chip.on{background:var(--ai);border-color:var(--ai)}
+.btn{border-radius:6px;font-family:inherit;letter-spacing:.02em}
+#gen{background:var(--shu);box-shadow:0 3px 0 #8f2c1e}
+#gen:active{transform:translateY(2px);box-shadow:0 1px 0 #8f2c1e}
+.seg button.s1.on{background:var(--matcha)}
+.legend i[style*="var(--g)"]{background:var(--matcha)!important}
+.mh{border-bottom:2px solid var(--ink)}
+.mh b{font-size:17px}
+.row.sp .rl b::before{content:"🌸 ";}
+.row .rl small{color:var(--shu)}
+.stat{border-radius:6px;border-left:4px solid var(--shu)}
+.rank{border-radius:6px}.rank.top{border-color:var(--matcha);background:#f2f6ea}
+.bar .b i{background:linear-gradient(90deg,var(--ai),#3d6a99)}
+.out{background:#f7efe2;border-color:var(--line);border-left:4px solid var(--matcha)}
+input[type=text],input[type=tel],input[type=number],input[type=date],textarea,select{border-radius:4px}
+.petals{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.petals i{position:absolute;top:-20px;width:12px;height:10px;background:#f4b6c2;border-radius:12px 0 12px 0;opacity:.75;animation:fall 14s linear infinite}
+.petals i:nth-child(1){left:6%;animation-delay:0s}.petals i:nth-child(2){left:20%;animation-delay:4s;animation-duration:17s}
+.petals i:nth-child(3){left:38%;animation-delay:8s}.petals i:nth-child(4){left:55%;animation-delay:2s;animation-duration:19s}
+.petals i:nth-child(5){left:72%;animation-delay:6s}.petals i:nth-child(6){left:86%;animation-delay:10s;animation-duration:16s}
+.petals i:nth-child(7){left:94%;animation-delay:12s}
+@keyframes fall{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(40px,55vh) rotate(180deg)}100%{transform:translate(-20px,110vh) rotate(360deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.petals{display:none}}
+.wrap{position:relative;z-index:1}
+footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",serif;margin:30px 0 0;letter-spacing:.2em}
+@media(max-width:480px){h1{font-size:25px}.hanko{width:46px;height:46px;font-size:25px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <h1>🏡 Escapada a una casa rural</h1>
-  <p class="sub">Famílies del grup de Terrassa · 2027</p>
+<header class="hero">
+  <svg class="scene" viewBox="0 0 760 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><circle cx="610" cy="70" r="38" fill="#c8442f"/><path d="M0 200 L120 120 L190 150 L300 70 L360 105 L430 60 L520 130 L600 100 L760 170 L760 200 Z" fill="#1c3757"/><path d="M285 82 L300 70 L318 81 L308 86 L300 80 L292 86 Z" fill="#f3ece0"/><path d="M0 200 L90 160 L200 185 L330 140 L470 180 L620 150 L760 190 L760 200 Z" fill="#132a44"/></svg>
+  <div class="hanko" aria-hidden="true">旅</div>
+  <p class="kicker">ピッチ · 田舎の旅</p>
+  <h1>Pitxi Escapada Rural 2027</h1>
+  <p class="sub">Famílies del grup de Terrassa · una casa, molts amics</p>
+  <div class="wave" aria-hidden="true"></div>
 </header>
+<div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div class="tabs" role="tablist">
   <button id="tabF" class="on" data-tab="form">Respondre l'enquesta</button>
   <button id="tabP" data-tab="panel">Organització</button>
@@ -107,7 +161,7 @@ a{color:var(--g)}
   </section>
 
   <section class="card">
-    <h2><span class="num">1</span>La teva família</h2>
+    <h2><span class="num">一</span>La teva família</h2>
     <label class="f" for="fam">Nom de la família <span class="hint">(com us coneixem al grup)</span></label>
     <input type="text" id="fam" placeholder="Ex.: Família Garcia-Puig" autocomplete="off">
     <div class="two">
@@ -124,7 +178,7 @@ a{color:var(--g)}
   </section>
 
   <section class="card">
-    <h2><span class="num">2</span>Al·lèrgies i dietes</h2>
+    <h2><span class="num">二</span>Al·lèrgies i dietes</h2>
     <p class="muted" style="margin:0 0 8px">Important per planificar els àpats.</p>
     <div class="chips" data-multi="diets" id="dietChips"></div>
     <label class="f" for="allerTxt">Detalls <span class="hint">(qui i què, p. ex. "Marc, al·lèrgia als fruits secs")</span></label>
@@ -132,7 +186,7 @@ a{color:var(--g)}
   </section>
 
   <section class="card">
-    <h2><span class="num">3</span>Quan us va bé?</h2>
+    <h2><span class="num">三</span>Quan us va bé?</h2>
     <p class="muted" style="margin:0 0 8px">Caps de setmana i ponts de 2027, fins al juliol (festius de Catalunya; confirmeu-ho amb el calendari oficial). Marca només el que de debò podeu; el que deixis sense marcar compta com a "no".</p>
     <div class="legend"><span><i style="background:var(--g);color:#fff">✓</i>Ens va bé</span><span><i style="background:var(--y)">~</i>Si cal</span><span><i style="background:var(--r);color:#fff">✕</i>No podem</span></div>
     <label class="f">Durada que preferiu</label>
@@ -142,7 +196,7 @@ a{color:var(--g)}
   </section>
 
   <section class="card">
-    <h2><span class="num">4</span>Casa, zona i pressupost</h2>
+    <h2><span class="num">四</span>Casa, zona i pressupost</h2>
     <label class="f">Zones que us abelleixen <span class="hint">(diverses)</span></label>
     <div class="chips" data-multi="zones" id="zoneChips"></div>
     <label class="f">Fins a quant de viatge us sembla bé</label>
@@ -154,7 +208,7 @@ a{color:var(--g)}
   </section>
 
   <section class="card">
-    <h2><span class="num">5</span>Mascotes, cotxe i mobilitat</h2>
+    <h2><span class="num">五</span>Mascotes, cotxe i mobilitat</h2>
     <label class="f">Gossos que vindrien</label>
     <div class="stepper" data-step="dogs"><button type="button" data-d="-1">−</button><span id="dogsV">0</span><button type="button" data-d="1">+</button></div>
     <label class="f" for="petTxt">Altres mascotes <span class="hint">(opcional)</span></label>
@@ -170,7 +224,7 @@ a{color:var(--g)}
   </section>
 
   <section class="card">
-    <h2><span class="num">6</span>Àpats i repartiment de tasques</h2>
+    <h2><span class="num">六</span>Àpats i repartiment de tasques</h2>
     <label class="f">Com preferiu organitzar els àpats?</label>
     <div class="chips" data-single="meals" id="mealChips"></div>
     <label class="f">M'ofereixo per a <span class="hint">(diverses)</span></label>
@@ -223,6 +277,7 @@ a{color:var(--g)}
   <div id="results"></div>
 </div>
 </div>
+<footer class="jp wrap">一期一会 · cada trobada és única</footer>
 <div class="toast" id="toast"></div>
 
 <script>
