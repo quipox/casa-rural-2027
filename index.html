@@ -210,14 +210,12 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
   </section>
 
   <section class="card">
-    <h2><span class="num">四</span>Casa, zona i pressupost</h2>
-    <label class="f">Zones que us abelleixen <span class="hint">(diverses)</span></label>
-    <div class="chips" data-multi="zones" id="zoneChips"></div>
+    <h2><span class="num">四</span>Casa i pressupost</h2>
     <label class="f">Fins a quant de viatge us sembla bé</label>
     <div class="chips" data-single="travel" id="travelChips"></div>
     <label class="f">Que la casa tingui <span class="hint">(el que més us importa)</span></label>
     <div class="chips" data-multi="extras" id="extraChips"></div>
-    <label class="f">Pressupost per família per a l'allotjament <span class="hint">(total de l'estada, sense menjar)</span></label>
+    <label class="f">Pressupost total per família <span class="hint">(allotjament de tota l'estada, sense menjar · màxim 300 €)</span></label>
     <div class="chips" data-single="budget" id="budgetChips"></div>
   </section>
 
@@ -350,18 +348,18 @@ var PBY={};PERIODS.forEach(function(p){PBY[p.id]=p});
 /* ---------- opciones ---------- */
 var OPT={
  needs:[["cuna","Cuna / llit de viatge"],["trona","Trona"],["bano","Banyera o canviador"]],
- diets:[["celiaco","Celiaquia / sense gluten"],["lactosa","Sense lactosa"],["frutossecos","Fruits secs"],["marisco","Marisc / peix"],["huevo","Ou"],["vegetariano","Vegetarià"],["vegano","Vegà"],["halal","Sense porc / halal"]],
- nights:[["0","Només el dia"],["1","1 nit"],["2","2 nits"],["any","Ens és igual"],["3","3 nits"],["4","4 nits o més"]],
+ diets:[["celiaco","Celiaquia / sense gluten"],["lactosa","Sense lactosa"],["frutossecos","Fruits secs"],["marisco","Marisc / peix"],["huevo","Ou"],["vegetariano","Vegetarià"],["vegano","Vegà"]],
+ nights:[["0","Només el dia (sense dormir)"],["1","1 nit"],["2","2 nits"]],
  day:[["ds","Dissabte"],["dg","Diumenge"],["igual","Ens és igual"]],
  zones:[["pirineo","Pirineu català / Cerdanya"],["garrotxa","Garrotxa / Empordà"],["osona","Osona / Bergadà / Berguedà"],["priorat","Priorat / Terra Alta"],["montseny","Montseny / Guilleries"],["lleida","Prepirineu de Lleida"],["aragon","Pirineu aragonès"],["cerca","A prop de Terrassa (<1 h)"]],
  travel:[["1h","Fins a 1 h"],["2h","Fins a 2 h"],["3h","Fins a 3 h"],["4h","Fins a 4 h o més"]],
  extras:[["piscina","Piscina"],["chimenea","Xemeneia / estufa"],["jardin","Jardí tancat"],["juegos","Zona de jocs"],["bbq","Barbacoa"],["spa","Jacuzzi / spa"],["sala","Sala comuna gran"],["rutas","Rutes / riu a prop"],["mascotas","Admet gossos"],["wifi","Bon wifi"]],
- budget:[["b1","Fins a 150 €"],["b2","150 – 250 €"],["b3","250 – 350 €"],["b4","Més de 350 €"],["b0","Encara no ho sé"]],
+ budget:[["b1","Fins a 100 €"],["b2","100 – 200 €"],["b3","200 – 300 €"],["b0","Encara no ho sé"]],
  car:[["si","Hi anirem amb cotxe propi"],["no","Necessitem que ens hi portin"]],
  meals:[["turnos","Cuinem per torns entre famílies"],["comun","Compra comuna i despeses a mitges"],["cada","Cada família pel seu compte"],["mixto","Mixt: sopars junts, la resta lliure"],["fuera","Restaurant / càtering a prop"]],
  helps:[["cocinar","Cuinar"],["compra","Fer la compra"],["bbq","Encarregar-me de la barbacoa"],["ninos","Activitats per als nens"],["juegos","Jocs de taula"],["reservas","Gestionar reserves / pagaments"],["playlist","Música i ambient"],["conducir","Portar gent al cotxe"]]
 };
-var BUD_MAX={b1:150,b2:250,b3:350};
+var BUD_MAX={b1:100,b2:200,b3:300};
 function optLabel(group,id){var a=OPT[group];for(var i=0;i<a.length;i++)if(a[i][0]===id)return a[i][1];return id}
 
 /* ---------- estado del formulario ---------- */
@@ -371,11 +369,11 @@ function defaults(){return {fam:"",contact:"",phone:"",adults:2,kids:[],needs:[]
 function save(){store("cr1-form",S)}
 
 function renderChips(){
-  var map={needs:"#needsChips",diets:"#dietChips",nights:"#nightsChips",day:"#dayChips",zones:"#zoneChips",travel:"#travelChips",extras:"#extraChips",budget:"#budgetChips",car:"#carChips",meals:"#mealChips",helps:"#helpChips"};
+  var map={needs:"#needsChips",diets:"#dietChips",nights:"#nightsChips",day:"#dayChips",travel:"#travelChips",extras:"#extraChips",budget:"#budgetChips",car:"#carChips",meals:"#mealChips",helps:"#helpChips"};
   Object.keys(map).forEach(function(g){
     var el=$(map[g]);if(!el)return;
     var multi=Array.isArray(S[g]);
-    el.innerHTML=OPT[g].filter(function(o){return !(g==="nights"&&(o[0]==="3"||o[0]==="4"))}).map(function(o){
+    el.innerHTML=OPT[g].map(function(o){
       var on=multi?S[g].indexOf(o[0])>-1:S[g]===o[0];
       return '<button type="button" class="chip'+(on?" on":"")+'" data-g="'+g+'" data-v="'+o[0]+'" aria-pressed="'+on+'">'+esc(o[1])+'</button>';
     }).join("");
@@ -456,7 +454,6 @@ function summaryText(o){
   L.push("👨‍👩‍👧 "+o.a+" adult(s)"+(o.k.length?" + "+o.k.length+" nen(s) ("+o.k.join(", ")+" anys)":""));
   if(o.al.length||o.at)L.push("🍽️ Dietes/al·lèrgies: "+o.al.map(function(x){return optLabel("diets",x)}).concat(o.at?[o.at]:[]).join("; "));
   L.push("📅 Dates ✓ "+o.ok.length+" · si cal "+o.mb.length);
-  if(o.z.length)L.push("📍 Zones: "+o.z.map(function(x){return optLabel("zones",x)}).join(", "));
   if(o.b)L.push("💶 Pressupost: "+optLabel("budget",o.b));
   L.push("");L.push(enc(o));
   return L.join("\n");
@@ -592,7 +589,6 @@ function renderPanel(){
   h+='<section class="card"><h2>5 · Preferències del grup</h2>';
   h+='<h3>Durada</h3>'+barsHTML(count(FAMS.map(function(f){return f.n?[f.n]:[]})),"nights",n);
   h+='<h3>Dia preferit</h3>'+barsHTML(count(FAMS.map(function(f){return f.dy?[f.dy]:[]})),"day",n);
-  h+='<h3>Zones</h3>'+barsHTML(count(FAMS.map(function(f){return f.z})),"zones",n);
   h+='<h3>Viatge màxim</h3>'+barsHTML(count(FAMS.map(function(f){return f.t?[f.t]:[]})),"travel",n);
   h+='<h3>Què ha de tenir la casa</h3>'+barsHTML(count(FAMS.map(function(f){return f.x})),"extras",n);
   h+='<h3>Pressupost per família</h3>'+barsHTML(count(FAMS.map(function(f){return f.b?[f.b]:[]})),"budget",n);
@@ -620,11 +616,9 @@ function phase2HTML(an){
   var att=r.ok.concat(r.mb),pp=peopleOf(att);
   var caps=att.map(function(f){return BUD_MAX[f.b]}).filter(function(x){return x});
   var cap=caps.length?Math.min.apply(null,caps):null;
-  var hasUnknown=att.some(function(f){return f.b==="b4"});
+  var hasUnknown=att.some(function(f){return f.b==="b0"||!f.b});
   var ex=count(att.map(function(f){return f.x}));
   var exTop=Object.keys(ex).sort(function(a,b){return ex[b]-ex[a]}).slice(0,6);
-  var zn=count(att.map(function(f){return f.z}));
-  var znTop=Object.keys(zn).sort(function(a,b){return zn[b]-zn[a]}).slice(0,3);
   var tr=att.map(function(f){return f.t}).filter(Boolean).sort();
   var dogs=0;att.forEach(function(f){dogs+=f.dg});
   var cunas=att.filter(function(f){return f.nd.indexOf("cuna")>-1}).length;
@@ -644,7 +638,6 @@ function phase2HTML(an){
   else brief.push("Dormitoris: mínim "+att.length+" (un per família) · Places: "+pp.t+" + marge");
   if(cunas||tronas)brief.push("Cunes: "+cunas+" · Trones: "+tronas);
   brief.push("Gossos: "+dogs+(dogs?" (la casa els ha d\'admetre)":""));
-  if(znTop.length)brief.push("Zones: "+znTop.map(function(z){return optLabel("zones",z)}).join("; "));
   if(tr.length)brief.push("Viatge màxim (el més restrictiu): "+optLabel("travel",tr[0]));
   if(exTop.length)brief.push("Imprescindibles/desitjables: "+exTop.map(function(x){return optLabel("extras",x)+" ("+ex[x]+")"}).join(", "));
   if(cap)brief.push("Pressupost: fins a "+cap+" € per família → casa fins a ~"+(cap*att.length)+" € en total");
