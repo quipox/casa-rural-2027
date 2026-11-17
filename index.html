@@ -55,6 +55,16 @@ input:focus,textarea:focus,select:focus{outline:2px solid var(--g);outline-offse
 .seg button.s1.on{background:var(--g);color:#fff}
 .seg button.s2.on{background:var(--y);color:#3b2d05}
 .seg button.s3.on{background:var(--r);color:#fff}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin:8px 0 4px}
+.dchip{position:relative;border:1px solid var(--line);background:#fff;border-radius:6px;padding:8px 6px;font:inherit;color:var(--ink);cursor:pointer;text-align:center;line-height:1.2;min-height:52px}
+.dchip b{display:block;font-size:15px}.dchip small{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+.dchip.sp{border-color:#f0b9c4;background:#fff6f8}.dchip.sp small{color:var(--shu)}
+.dchip.v1{background:var(--matcha);border-color:var(--matcha);color:#fff}.dchip.v1 small{color:#eef4e3}
+.dchip.v2{background:var(--y);border-color:var(--y);color:#3b2d05}.dchip.v2 small{color:#5a4510}
+.dchip .mk{position:absolute;top:3px;right:5px;font-size:12px;font-weight:700}
+.tapinfo{display:flex;flex-wrap:wrap;gap:6px;font-size:12px}
+.tap{border:1px solid var(--line);border-radius:4px;padding:3px 8px;background:#fff;color:var(--mut)}
+.tap.ok{background:var(--matcha);color:#fff;border-color:var(--matcha)}.tap.mb{background:var(--y);color:#3b2d05;border-color:var(--y)}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin:6px 0}
 .legend i{font-style:normal;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;margin-right:4px;font-size:13px}
 .out{background:var(--g2);border:1px solid #bcd3b8;border-radius:var(--rad);padding:16px;margin-top:14px}
@@ -188,10 +198,13 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
 
   <section class="card">
     <h2><span class="num">三</span>Quan us va bé?</h2>
-    <p class="muted" style="margin:0 0 8px">Caps de setmana i ponts de 2027, fins al juliol (festius de Catalunya; confirmeu-ho amb el calendari oficial). Marca només el que de debò podeu; el que deixis sense marcar compta com a "no".</p>
-    <div class="legend"><span><i style="background:var(--g);color:#fff">✓</i>Ens va bé</span><span><i style="background:var(--y)">~</i>Si cal</span><span><i style="background:var(--r);color:#fff">✕</i>No podem</span></div>
-    <label class="f">Durada que preferiu</label>
+    <label class="f">Quant de temps us hi voleu quedar?</label>
     <div class="chips" data-single="nights" id="nightsChips"></div>
+    <label class="f">Quin dia us va millor?</label>
+    <div class="chips" data-single="day" id="dayChips"></div>
+    <label class="f" style="margin-top:18px">Caps de setmana que us van bé <span class="hint">(gener – juliol 2027)</span></label>
+    <div class="tapinfo"><span class="tap ok">Toca 1 cop · ✓ ens va bé</span><span class="tap mb">2 cops · ~ si cal</span><span class="tap">3 cops · treure</span></div>
+    <p class="muted" style="margin:6px 0 4px;font-size:13px">Només cal tocar els que us van bé: la resta compten com a "no". 🌸 = pont o festiu (festius de Catalunya; confirmeu-ho al calendari oficial).</p>
     <div id="dateList"></div>
     <p class="muted" id="dateCount" style="margin-top:12px"></p>
   </section>
@@ -329,7 +342,7 @@ var PERIODS=(function(){
     d.setDate(d.getDate()+1);
   }
   out.sort(function(x,y){return x.a-y.a});
-  out.forEach(function(p){p.label=lab(p.a,p.b);p.m=p.a.getMonth()});
+  out.forEach(function(p){var a=p.a;if(!p.special){a=new Date(p.a.getTime());a.setDate(a.getDate()+1)}p.label=lab(a,p.b);p.m=p.a.getMonth();p.sa=a})
   return out;
 })();
 var PBY={};PERIODS.forEach(function(p){PBY[p.id]=p});
@@ -338,7 +351,8 @@ var PBY={};PERIODS.forEach(function(p){PBY[p.id]=p});
 var OPT={
  needs:[["cuna","Cuna / llit de viatge"],["trona","Trona"],["bano","Banyera o canviador"]],
  diets:[["celiaco","Celiaquia / sense gluten"],["lactosa","Sense lactosa"],["frutossecos","Fruits secs"],["marisco","Marisc / peix"],["huevo","Ou"],["vegetariano","Vegetarià"],["vegano","Vegà"],["halal","Sense porc / halal"]],
- nights:[["2","2 nits"],["3","3 nits"],["4","4 o més"],["any","Ens és igual"]],
+ nights:[["0","Només el dia"],["1","1 nit"],["2","2 nits"],["any","Ens és igual"],["3","3 nits"],["4","4 nits o més"]],
+ day:[["ds","Dissabte"],["dg","Diumenge"],["igual","Ens és igual"]],
  zones:[["pirineo","Pirineu català / Cerdanya"],["garrotxa","Garrotxa / Empordà"],["osona","Osona / Bergadà / Berguedà"],["priorat","Priorat / Terra Alta"],["montseny","Montseny / Guilleries"],["lleida","Prepirineu de Lleida"],["aragon","Pirineu aragonès"],["cerca","A prop de Terrassa (<1 h)"]],
  travel:[["1h","Fins a 1 h"],["2h","Fins a 2 h"],["3h","Fins a 3 h"],["4h","Fins a 4 h o més"]],
  extras:[["piscina","Piscina"],["chimenea","Xemeneia / estufa"],["jardin","Jardí tancat"],["juegos","Zona de jocs"],["bbq","Barbacoa"],["spa","Jacuzzi / spa"],["sala","Sala comuna gran"],["rutas","Rutes / riu a prop"],["mascotas","Admet gossos"],["wifi","Bon wifi"]],
@@ -352,16 +366,16 @@ function optLabel(group,id){var a=OPT[group];for(var i=0;i<a.length;i++)if(a[i][
 
 /* ---------- estado del formulario ---------- */
 var S=store("cr1-form")||{};
-function defaults(){return {fam:"",contact:"",phone:"",adults:2,kids:[],needs:[],diets:[],allerTxt:"",nights:"",dates:{},zones:[],travel:"",extras:[],budget:"",dogs:0,petTxt:"",car:"",seats:0,mobTxt:"",meals:"",helps:[],comm:""}}
+function defaults(){return {fam:"",contact:"",phone:"",adults:2,kids:[],needs:[],diets:[],allerTxt:"",nights:"",day:"",dates:{},zones:[],travel:"",extras:[],budget:"",dogs:0,petTxt:"",car:"",seats:0,mobTxt:"",meals:"",helps:[],comm:""}}
 (function(){var d=defaults();for(var k in d)if(S[k]===undefined)S[k]=d[k]})();
 function save(){store("cr1-form",S)}
 
 function renderChips(){
-  var map={needs:"#needsChips",diets:"#dietChips",nights:"#nightsChips",zones:"#zoneChips",travel:"#travelChips",extras:"#extraChips",budget:"#budgetChips",car:"#carChips",meals:"#mealChips",helps:"#helpChips"};
+  var map={needs:"#needsChips",diets:"#dietChips",nights:"#nightsChips",day:"#dayChips",zones:"#zoneChips",travel:"#travelChips",extras:"#extraChips",budget:"#budgetChips",car:"#carChips",meals:"#mealChips",helps:"#helpChips"};
   Object.keys(map).forEach(function(g){
     var el=$(map[g]);if(!el)return;
     var multi=Array.isArray(S[g]);
-    el.innerHTML=OPT[g].map(function(o){
+    el.innerHTML=OPT[g].filter(function(o){return !(g==="nights"&&(o[0]==="3"||o[0]==="4"))}).map(function(o){
       var on=multi?S[g].indexOf(o[0])>-1:S[g]===o[0];
       return '<button type="button" class="chip'+(on?" on":"")+'" data-g="'+g+'" data-v="'+o[0]+'" aria-pressed="'+on+'">'+esc(o[1])+'</button>';
     }).join("");
@@ -377,15 +391,16 @@ function renderDates(){
   var html="",cur=-1;
   PERIODS.forEach(function(p){
     if(p.m!==cur){
+      if(cur>-1)html+='</div>';
       cur=p.m;
-      html+='<div class="mh"><b>'+MES[cur]+'</b><span class="q"><button type="button" data-all="'+cur+'">Tots ✓</button><button type="button" data-none="'+cur+'">Neteja</button></span></div>';
+      html+='<div class="mh"><b>'+MES[cur]+'</b><span class="q"><button type="button" data-all="'+cur+'">Tots ✓</button><button type="button" data-none="'+cur+'">Neteja</button></span></div><div class="dgrid">';
     }
     var v=S.dates[p.id]||0;
-    html+='<div class="row'+(p.special?" sp":"")+'" data-p="'+p.id+'"><div class="rl"><b>'+esc(p.label)+'</b>'+(p.tag?'<small>'+esc(p.tag)+'</small>':"")+'</div><div class="seg">'
-      +'<button type="button" class="s1'+(v===1?" on":"")+'" data-s="1" aria-label="Ens va bé">✓</button>'
-      +'<button type="button" class="s2'+(v===2?" on":"")+'" data-s="2" aria-label="Si cal">~</button>'
-      +'<button type="button" class="s3'+(v===3?" on":"")+'" data-s="3" aria-label="No podem">✕</button></div></div>';
+    var top=p.special?esc(p.label.replace(/ [a-zç]+$/,"")):(p.sa.getDate()+" – "+p.b.getDate());
+    var sub=p.special?(p.id==="ss"?"🌸 Setmana Santa":p.id==="pg"?"🌸 Pasqua Granada":p.id==="sj"?"🌸 Sant Joan":"🌸 Pont"):(p.tag?"🌸 "+esc(p.tag):"ds · dg");
+    html+='<button type="button" class="dchip'+(p.special||p.tag?" sp":"")+(v===1?" v1":v===2?" v2":"")+'" data-cyc="'+p.id+'" title="'+esc(p.label+(p.tag?" · "+p.tag:""))+'" aria-label="'+esc(p.label)+'"><span class="mk">'+(v===1?"✓":v===2?"~":"")+'</span><b>'+top+'</b><small>'+sub+'</small></button>';
   });
+  if(cur>-1)html+='</div>';
   $("#dateList").innerHTML=html;
   countDates();
 }
@@ -419,11 +434,12 @@ viewForm.addEventListener("click",function(e){
   if(st){var key=st.dataset.step,d=parseInt(t.dataset.d,10),min=key==="adults"?1:0,max=key==="seats"?8:12;S[key]=Math.max(min,Math.min(max,S[key]+d));$("#"+key+"V").textContent=S[key];save();return}
   if(t.id==="addKid"){if(S.kids.length<12){S.kids.push(5);save();renderKids()}return}
   if(t.dataset.rk!==undefined){S.kids.splice(+t.dataset.rk,1);save();renderKids();return}
-  if(t.dataset.s){
-    var row=t.closest(".row"),pid=row.dataset.p,val=parseInt(t.dataset.s,10);
-    if(S.dates[pid]===val)delete S.dates[pid];else S.dates[pid]=val;
+  if(t.dataset.cyc){
+    var pid=t.dataset.cyc,cv=S.dates[pid]||0,nv=cv===0?1:cv===1?2:0;
+    if(nv)S.dates[pid]=nv;else delete S.dates[pid];
     save();
-    $$("button",row).forEach(function(b){b.classList.toggle("on",S.dates[pid]===parseInt(b.dataset.s,10))});
+    t.classList.toggle("v1",nv===1);t.classList.toggle("v2",nv===2);
+    t.querySelector(".mk").textContent=nv===1?"✓":nv===2?"~":"";
     countDates();return;
   }
   if(t.dataset.all!==undefined||t.dataset.none!==undefined){
@@ -447,7 +463,7 @@ function summaryText(o){
 }
 function buildObj(){
   var ok=[],mb=[];for(var k in S.dates){if(S.dates[k]===1)ok.push(k);else if(S.dates[k]===2)mb.push(k)}
-  return {f:S.fam.trim(),c:S.contact.trim(),p:S.phone.trim(),a:S.adults,k:S.kids.slice(),nd:S.needs.slice(),al:S.diets.slice(),at:S.allerTxt.trim(),n:S.nights,ok:ok,mb:mb,z:S.zones.slice(),t:S.travel,x:S.extras.slice(),b:S.budget,dg:S.dogs,pt:S.petTxt.trim(),ca:S.car,se:S.seats,mo:S.mobTxt.trim(),me:S.meals,he:S.helps.slice(),co:S.comm.trim(),ts:Date.now()};
+  return {f:S.fam.trim(),c:S.contact.trim(),p:S.phone.trim(),a:S.adults,k:S.kids.slice(),nd:S.needs.slice(),al:S.diets.slice(),at:S.allerTxt.trim(),n:S.nights,dy:S.day,ok:ok,mb:mb,z:S.zones.slice(),t:S.travel,x:S.extras.slice(),b:S.budget,dg:S.dogs,pt:S.petTxt.trim(),ca:S.car,se:S.seats,mo:S.mobTxt.trim(),me:S.meals,he:S.helps.slice(),co:S.comm.trim(),ts:Date.now()};
 }
 $("#gen").addEventListener("click",function(){
   var errs=[];
@@ -486,7 +502,7 @@ function normFam(o){
   o.k=Array.isArray(o.k)?o.k:[];o.ok=Array.isArray(o.ok)?o.ok:[];o.mb=Array.isArray(o.mb)?o.mb:[];
   ["nd","al","z","x","he"].forEach(function(k){o[k]=Array.isArray(o[k])?o[k]:[]});
   o.a=Math.max(1,parseInt(o.a,10)||1);o.dg=parseInt(o.dg,10)||0;o.se=parseInt(o.se,10)||0;
-  ["c","p","at","pt","mo","co","n","t","b","ca","me"].forEach(function(k){o[k]=o[k]==null?"":String(o[k])});
+  ["c","p","at","pt","mo","co","n","dy","t","b","ca","me"].forEach(function(k){o[k]=o[k]==null?"":String(o[k])});
   return o;
 }
 function addFromText(txt){
@@ -516,10 +532,10 @@ $("#demo").addEventListener("click",function(){
   var ids=PERIODS.map(function(p){return p.id});
   function pick(a){return a.filter(function(x){return PBY[x]})}
   var base=[
-   {f:"Família Exemple Martí",c:"Laura",p:"",a:2,k:[4,7],nd:[],al:["frutossecos"],at:"Pau, al·lèrgia als fruits secs",n:"3",ok:["ss","sj","w0409","w0507"],mb:["w0618","w0702"],z:["pirineo","garrotxa"],t:"2h",x:["piscina","chimenea","jardin"],b:"b3",dg:1,pt:"",ca:"si",se:2,mo:"",me:"turnos",he:["cocinar","bbq"],co:"",ts:0},
-   {f:"Família Exemple Ruiz",c:"Jordi",p:"",a:2,k:[2],nd:["cuna"],al:[],at:"",n:"3",ok:["ss","sj","w0409","w0423"],mb:["pg","w0507"],z:["garrotxa","osona"],t:"2h",x:["chimenea","juegos","mascotas"],b:"b2",dg:0,pt:"",ca:"si",se:1,mo:"Cotxet",me:"turnos",he:["compra"],co:"Arribem el divendres tard",ts:0},
-   {f:"Família Exemple Vidal",c:"Marta",p:"",a:2,k:[9,11,13],nd:[],al:["celiaco"],at:"Júlia, celíaca",n:"2",ok:["sj","w0409","w0507","pg"],mb:["ss","w0618"],z:["pirineo","lleida"],t:"3h",x:["piscina","rutas","bbq"],b:"b3",dg:2,pt:"",ca:"si",se:0,mo:"",me:"mixto",he:["juegos","ninos"],co:"",ts:0},
-   {f:"Família Exemple Costa",c:"Anna",p:"",a:1,k:[6],nd:[],al:[],at:"",n:"3",ok:["ss","w0409","w0423","w0618"],mb:["sj","pg"],z:["montseny","cerca"],t:"1h",x:["chimenea","jardin"],b:"b1",dg:0,pt:"Un gat (es queda a casa)",ca:"no",se:0,mo:"",me:"comun",he:["reservas"],co:"Pressupost ajustat, si us plau",ts:0}
+   {f:"Família Exemple Martí",c:"Laura",p:"",a:2,k:[4,7],nd:[],al:["frutossecos"],at:"Pau, al·lèrgia als fruits secs",n:"0",dy:"ds",ok:["ss","sj","w0409","w0507"],mb:["w0618","w0702"],z:["pirineo","garrotxa"],t:"2h",x:["piscina","chimenea","jardin"],b:"b3",dg:1,pt:"",ca:"si",se:2,mo:"",me:"turnos",he:["cocinar","bbq"],co:"",ts:0},
+   {f:"Família Exemple Ruiz",c:"Jordi",p:"",a:2,k:[2],nd:["cuna"],al:[],at:"",n:"0",dy:"igual",ok:["ss","sj","w0409","w0423"],mb:["pg","w0507"],z:["garrotxa","osona"],t:"2h",x:["chimenea","juegos","mascotas"],b:"b2",dg:0,pt:"",ca:"si",se:1,mo:"Cotxet",me:"turnos",he:["compra"],co:"Arribem el divendres tard",ts:0},
+   {f:"Família Exemple Vidal",c:"Marta",p:"",a:2,k:[9,11,13],nd:[],al:["celiaco"],at:"Júlia, celíaca",n:"1",dy:"ds",ok:["sj","w0409","w0507","pg"],mb:["ss","w0618"],z:["pirineo","lleida"],t:"3h",x:["piscina","rutas","bbq"],b:"b3",dg:2,pt:"",ca:"si",se:0,mo:"",me:"mixto",he:["juegos","ninos"],co:"",ts:0},
+   {f:"Família Exemple Costa",c:"Anna",p:"",a:1,k:[6],nd:[],al:[],at:"",n:"0",dy:"dg",ok:["ss","w0409","w0423","w0618"],mb:["sj","pg"],z:["montseny","cerca"],t:"1h",x:["chimenea","jardin"],b:"b1",dg:0,pt:"Un gat (es queda a casa)",ca:"no",se:0,mo:"",me:"comun",he:["reservas"],co:"Pressupost ajustat, si us plau",ts:0}
   ];
   base.forEach(function(o){
     var codes=enc(o);addFromText(codes);
@@ -575,6 +591,7 @@ function renderPanel(){
 
   h+='<section class="card"><h2>5 · Preferències del grup</h2>';
   h+='<h3>Durada</h3>'+barsHTML(count(FAMS.map(function(f){return f.n?[f.n]:[]})),"nights",n);
+  h+='<h3>Dia preferit</h3>'+barsHTML(count(FAMS.map(function(f){return f.dy?[f.dy]:[]})),"day",n);
   h+='<h3>Zones</h3>'+barsHTML(count(FAMS.map(function(f){return f.z})),"zones",n);
   h+='<h3>Viatge màxim</h3>'+barsHTML(count(FAMS.map(function(f){return f.t?[f.t]:[]})),"travel",n);
   h+='<h3>Què ha de tenir la casa</h3>'+barsHTML(count(FAMS.map(function(f){return f.x})),"extras",n);
@@ -620,6 +637,8 @@ function phase2HTML(an){
   brief.push("BRIEFING PER BUSCAR CASA RURAL");
   brief.push("Data: "+r.p.label+" de 2027"+(r.p.tag?" ("+r.p.tag+")":""));
   brief.push("Durada preferida: "+(nTop?optLabel("nights",nTop):"sense definir"));
+  var dys=count(att.map(function(f){return f.dy?[f.dy]:[]})),dTop=Object.keys(dys).sort(function(a,b){return dys[b]-dys[a]})[0];
+  if(dTop)brief.push("Dia preferit: "+optLabel("day",dTop));
   brief.push("Famílies: "+att.length+" · Persones: "+pp.t+" ("+pp.a+" adults, "+pp.k+" nens"+(pp.b?", "+pp.b+" menors de 3":"")+")");
   brief.push("Dormitoris: mínim "+att.length+" (un per família) · Places: "+pp.t+" + marge");
   if(cunas||tronas)brief.push("Cunes: "+cunas+" · Trones: "+tronas);
