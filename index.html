@@ -18,7 +18,7 @@ h2{font:700 20px/1.2 Georgia,serif;margin:0 0 4px}
 h3{font-size:15px;margin:18px 0 6px}
 .sub{color:var(--mut);margin:0}
 .tabs{display:flex;gap:6px;margin:18px 0;background:#ece4d1;padding:4px;border-radius:999px}
-.tabs button{flex:1;border:0;background:transparent;padding:10px;border-radius:999px;font:600 15px system-ui;color:var(--mut);cursor:pointer}
+.tabs button{flex:1;min-width:0;border:0;background:transparent;padding:10px;border-radius:999px;font:600 15px system-ui;color:var(--mut);cursor:pointer}
 .tabs button.on{background:var(--card);color:var(--g);box-shadow:0 1px 3px #0002}
 section.card{background:var(--card);border:1px solid var(--line);border-radius:var(--rad);padding:18px;margin:14px 0}
 .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--g);color:#fff;font:700 14px system-ui;margin-right:8px}
@@ -161,6 +161,7 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
 <div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 <div class="tabs" role="tablist">
   <button id="tabF" class="on" data-tab="form">Respondre l'enquesta</button>
+  <button id="tabM" data-tab="metrics">Mètriques</button>
   <button id="tabP" data-tab="panel">Organització</button>
 </div>
 
@@ -288,6 +289,9 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
 
   <div id="results"></div>
 </div>
+
+<!-- ======================= MÈTRIQUES ======================= -->
+<div id="viewMetrics" class="hidden"><div id="metricsOut"></div></div>
 </div>
 <footer class="jp wrap">一期一会 · cada trobada és única</footer>
 <div class="toast" id="toast"></div>
@@ -480,12 +484,14 @@ $("#outTxt").addEventListener("focus",function(e){e.target.select()});
 $("#editAgain").addEventListener("click",function(){$("#outBox").classList.add("hidden");window.scrollTo({top:0,behavior:"smooth"})});
 
 /* ---------- pestañas ---------- */
+var HASH={form:"#respondre",metrics:"#metriques",panel:"#organitzacio"};
+function tabFromHash(){return location.hash==="#organitzacio"?"panel":(location.hash==="#metriques"?"metrics":"form")}
 function showTab(t){
-  var p=t==="panel";
-  $("#viewForm").classList.toggle("hidden",p);$("#viewPanel").classList.toggle("hidden",!p);
-  $("#tabF").classList.toggle("on",!p);$("#tabP").classList.toggle("on",p);
-  if(p)renderPanel();
-  try{history.replaceState(null,"",p?"#organitzacio":"#respondre")}catch(e){}
+  $("#viewForm").classList.toggle("hidden",t!=="form");$("#viewPanel").classList.toggle("hidden",t!=="panel");$("#viewMetrics").classList.toggle("hidden",t!=="metrics");
+  $("#tabF").classList.toggle("on",t==="form");$("#tabP").classList.toggle("on",t==="panel");$("#tabM").classList.toggle("on",t==="metrics");
+  if(t==="panel")renderPanel();
+  if(t==="metrics")renderMetrics();
+  try{history.replaceState(null,"",HASH[t]||"#respondre")}catch(e){}
 }
 $$(".tabs button").forEach(function(b){b.addEventListener("click",function(){showTab(b.dataset.tab)})});
 
@@ -676,6 +682,52 @@ function bindPhase2(an){
   $("#copyBrief").addEventListener("click",function(){copy($("#briefTxt").value)});
 }
 
+
+/* ---------- MÈTRIQUES ANÒNIMES ---------- */
+function renderMetrics(){
+  var M=$("#metricsOut");
+  if(!FAMS.length){M.innerHTML='<section class="card empty"><b>Encara no hi ha respostes</b><br>Les mètriques surten de les respostes que la persona que organitza ha enganxat a la pestanya Organització, en aquest mateix dispositiu.</section>';return}
+  var n=FAMS.length,pp=peopleOf(FAMS),an=analyze();
+  var h='<section class="card"><h2>Mètriques anònimes</h2><p class="muted" style="margin:0 0 8px">Sense noms ni comentaris: només totals. Ideal per fer una captura i compartir-la al grup.</p>'
+   +'<div class="stats"><div class="stat"><b>'+n+'</b><span>famílies han respost</span></div><div class="stat"><b>'+pp.t+'</b><span>persones</span></div><div class="stat"><b>'+pp.a+'</b><span>adults</span></div><div class="stat"><b>'+pp.k+'</b><span>nens/es</span></div></div>';
+  var ages={"0–2":0,"3–5":0,"6–11":0,"12+":0};FAMS.forEach(function(f){f.k.forEach(function(a){ages[a<3?"0–2":a<6?"3–5":a<12?"6–11":"12+"]++})});
+  if(pp.k){h+='<h3>Edats dels nens</h3>'+Object.keys(ages).map(function(k){return '<div class="bar"><span class="l">'+k+' anys</span><span class="b"><i style="width:'+Math.round(100*ages[k]/pp.k)+'%"></i></span><span class="n">'+ages[k]+'</span></div>'}).join("")}
+  h+='</section>';
+  var ranked=an.filter(function(r){return r.ok.length||r.mb.length}).sort(function(a,b){return b.score-a.score||a.p.a-b.p.a}).slice(0,8);
+  h+='<section class="card"><h2>Dates amb més suport</h2>';
+  if(!ranked.length)h+='<p class="muted">Sense dades.</p>';
+  ranked.forEach(function(r,i){
+    var w1=Math.round(100*r.ok.length/n),w2=Math.round(100*r.mb.length/n);
+    h+='<div class="bar" style="align-items:center"><span class="l">'+(r.p.special?"🌸 ":"")+esc(r.p.label)+'</span><span class="b" style="display:flex"><i style="width:'+w1+'%;background:var(--matcha)"></i><i style="width:'+w2+'%;background:var(--y)"></i></span><span class="n" style="flex-basis:52px">'+r.ok.length+(r.mb.length?' +'+r.mb.length:'')+'</span></div>';
+  });
+  h+='<div class="legend" style="margin-top:8px"><span><i style="background:var(--matcha);color:#fff">✓</i>ens va bé</span><span><i style="background:var(--y)">~</i>si cal</span></div></section>';
+  function block(title,group,arrs){return '<h3>'+title+'</h3>'+barsHTML(count(arrs),group,n)}
+  h+='<section class="card"><h2>Preferències</h2>'
+   +block("Durada","nights",FAMS.map(function(f){return f.n?[f.n]:[]}))
+   +block("Dia preferit","day",FAMS.map(function(f){return f.dy?[f.dy]:[]}))
+   +block("Viatge màxim","travel",FAMS.map(function(f){return f.t?[f.t]:[]}))
+   +block("Pressupost per família","budget",FAMS.map(function(f){return f.b?[f.b]:[]}))
+   +block("Què ha de tenir la casa","extras",FAMS.map(function(f){return f.x}))
+   +block("Àpats","meals",FAMS.map(function(f){return f.me?[f.me]:[]}))
+   +'</section>';
+  var withDiet=FAMS.filter(function(f){return f.al.length||f.at}).length;
+  var dogs=0,cars=0,seats=0,noCar=0,cunes=0;FAMS.forEach(function(f){dogs+=f.dg;if(f.ca==="si"){cars++;seats+=f.se}else if(f.ca==="no")noCar++;if(f.nd.indexOf("cuna")>-1)cunes++});
+  h+='<section class="card"><h2>Logística</h2><div class="stats"><div class="stat"><b>'+withDiet+'</b><span>famílies amb al·lèrgies o dietes</span></div><div class="stat"><b>'+dogs+'</b><span>gossos</span></div><div class="stat"><b>'+cars+'</b><span>cotxes</span></div><div class="stat"><b>'+seats+'</b><span>places lliures</span></div><div class="stat"><b>'+noCar+'</b><span>famílies sense cotxe</span></div><div class="stat"><b>'+cunes+'</b><span>cunes</span></div></div>'
+   +block("Dietes (nombre de famílies)","diets",FAMS.map(function(f){return f.al}))+'</section>';
+  h+='<section class="card"><h2>Compartir al grup</h2><p class="muted" style="margin:0 0 8px">Resum en text, sense noms, per enganxar al WhatsApp.</p><button class="btn" id="copyMetrics">Copiar resum anònim</button></section>';
+  M.innerHTML=h;
+  $("#copyMetrics").addEventListener("click",function(){
+    var L=["🏡 Pitxi Escapada Rural 2027 · com anem","✅ "+n+" famílies han respost ("+pp.t+" persones: "+pp.a+" adults i "+pp.k+" nens)",""];
+    if(ranked.length){L.push("📅 Dates amb més suport:");ranked.slice(0,5).forEach(function(r){L.push("· "+r.p.label+(r.p.special?" 🌸":"")+": "+r.ok.length+" ✓"+(r.mb.length?" / "+r.mb.length+" ~":""))});L.push("")}
+    function top(group,arrs){var c=count(arrs),k=Object.keys(c).sort(function(a,b){return c[b]-c[a]})[0];return k?optLabel(group,k)+" ("+c[k]+")":"—"}
+    L.push("⏱️ Durada preferida: "+top("nights",FAMS.map(function(f){return f.n?[f.n]:[]})));
+    L.push("🚗 Viatge: "+top("travel",FAMS.map(function(f){return f.t?[f.t]:[]})));
+    L.push("💶 Pressupost: "+top("budget",FAMS.map(function(f){return f.b?[f.b]:[]})));
+    var pend=ORG.deadline?"\n⏰ Qui falti, encara hi sou a temps!":"";
+    copy(L.join("\n")+pend);
+  });
+}
+
 /* ---------- eventos panel ---------- */
 $("#results").addEventListener("click",function(e){
   var b=e.target.closest("button");if(!b)return;
@@ -697,8 +749,8 @@ $("#copyInvite").addEventListener("click",function(){
 
 /* ---------- arranque ---------- */
 renderAll();
-showTab(location.hash==="#organitzacio"?"panel":"form");
-window.addEventListener("hashchange",function(){showTab(location.hash==="#organitzacio"?"panel":"form")});
+showTab(tabFromHash());
+window.addEventListener("hashchange",function(){showTab(tabFromHash())});
 })();
 </script>
 </body>
