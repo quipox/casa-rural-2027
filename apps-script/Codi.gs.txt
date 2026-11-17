@@ -1,0 +1,86 @@
+/**
+ * Pitxi Escapada Rural 2027 · receptor de respostes
+ * Enganxa aquest codi a Extensions → Apps Script del teu Google Sheet.
+ */
+const CLAU_ORGANITZADORA = 'POSA-AQUI-LA-TEVA-CLAU';   // la clau per veure les respostes amb noms
+const FULL = 'Respostes';
+
+const COLUMNES = [
+  ['Data', null], ['Família', 'fam'], ['Contacte', 'contact'], ['Telèfon', 'phone'],
+  ['Adults', 'adults'], ['Nens (edats)', 'kids'], ['Necessiten', 'needs'], ['Al·lèrgies / dietes', 'diets'],
+  ['Durada', 'nights'], ['Dia preferit', 'day'], ['Dates ✓', 'ok'], ['Dates ~ (si cal)', 'mb'],
+  ['Viatge màxim', 'travel'], ['Pressupost', 'budget'], ['Casa', 'extras'], ['Gossos', 'dogs'],
+  ['Altres mascotes', 'pets'], ['Cotxe', 'car'], ['Places lliures', 'seats'], ['Mobilitat', 'mobility'],
+  ['Àpats', 'meals'], ["S'ofereix per", 'helps'], ['Comentaris', 'comments'], ['Dades (no tocar)', null]
+];
+
+function full_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(FULL);
+  if (!sh) {
+    sh = ss.insertSheet(FULL);
+    sh.appendRow(COLUMNES.map(c => c[0]));
+    sh.setFrozenRows(1);
+    sh.getRange(1, 1, 1, COLUMNES.length).setFontWeight('bold').setBackground('#25466b').setFontColor('#ffffff');
+  }
+  return sh;
+}
+
+function json_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function totes_() {
+  const sh = full_();
+  const n = sh.getLastRow() - 1;
+  if (n < 1) return [];
+  const col = COLUMNES.length;
+  return sh.getRange(2, col, n, 1).getValues()
+    .map(r => { try { return JSON.parse(r[0]); } catch (e) { return null; } })
+    .filter(Boolean);
+}
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const body = JSON.parse(e.postData.contents);
+    const o = body.o, row = body.row || {};
+    if (!o || !o.f || !o.c) return json_({ ok: false, error: 'dades' });
+    const sh = full_();
+    const valors = COLUMNES.map(c => c[1] ? (row[c[1]] === undefined ? '' : row[c[1]]) : '');
+    valors[0] = new Date();
+    valors[COLUMNES.length - 1] = JSON.stringify(o);
+    const clau = (o.f + '|' + o.c).toLowerCase().trim();
+    const n = sh.getLastRow() - 1;
+    let fila = -1;
+    if (n > 0) {
+      const v = sh.getRange(2, 2, n, 2).getValues();
+      for (let i = 0; i < v.length; i++) {
+        if ((String(v[i][0]) + '|' + String(v[i][1])).toLowerCase().trim() === clau) { fila = i + 2; break; }
+      }
+    }
+    if (fila > 0) sh.getRange(fila, 1, 1, valors.length).setValues([valors]);
+    else sh.appendRow(valors);
+    return json_({ ok: true, updated: fila > 0 });
+  } catch (err) {
+    return json_({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  const dades = totes_();
+  if (p.action === 'all') {
+    if (p.key !== CLAU_ORGANITZADORA) return json_({ ok: false, error: 'key' });
+    return json_({ ok: true, data: dades });
+  }
+  // Mètriques anònimes: sense noms, telèfons ni textos lliures
+  const anon = dades.map((o, i) => ({
+    f: 'Família ' + (i + 1), c: '-', a: o.a, k: o.k, nd: o.nd, al: o.al, n: o.n, dy: o.dy,
+    ok: o.ok, mb: o.mb, t: o.t, x: o.x, b: o.b, dg: o.dg, ca: o.ca, se: o.se, me: o.me, he: o.he
+  }));
+  return json_({ ok: true, data: anon });
+}

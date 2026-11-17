@@ -169,7 +169,7 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
 <div id="viewForm">
   <section class="card" style="background:var(--g2);border-color:#bcd3b8">
     <b>Com funciona?</b>
-    <p class="muted" style="margin:6px 0 0">Una persona per família omple això (3 minuts). Al final es genera un missatge amb un codi: copia'l i envia'l per WhatsApp a qui organitza. Aquí no es desa res en cap servidor; només el que tu enviïs.</p>
+    <p class="muted" style="margin:6px 0 0">Una persona per família omple això (3 minuts) i prem <b>Enviar</b> al final. Ja està! Si us equivoqueu, podeu tornar a enviar-ho: es queda l'última resposta.</p>
   </section>
 
   <section class="card">
@@ -247,11 +247,12 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
   </section>
 
   <div id="formErr"></div>
-  <button class="btn" id="gen" style="width:100%;font-size:17px;padding:15px">Generar la meva resposta</button>
+  <button class="btn" id="gen" style="width:100%;font-size:17px;padding:15px">Enviar la resposta</button>
+  <div id="sentBox" class="out hidden"><b>✅ Rebut! Moltes gràcies.</b><p class="muted" style="margin:6px 0 0">Si voleu canviar alguna cosa, modifiqueu-la i torneu a prémer Enviar. A la pestanya <b>Mètriques</b> podeu veure com va la votació.</p></div>
 
   <div id="outBox" class="out hidden">
-    <b>✅ Fet. Ara només falta enviar-ho:</b>
-    <p class="muted" style="margin:6px 0 10px">Prem el botó i enganxa el missatge al WhatsApp de qui organitza (o al grup). Conté un resum i el codi.</p>
+    <b>⚠️ No s'ha pogut enviar automàticament.</b>
+    <p class="muted" style="margin:6px 0 10px">Copia aquest missatge i envia'l per WhatsApp a qui organitza: així no es perd la resposta.</p>
     <textarea id="outTxt" readonly></textarea>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
       <button class="btn" id="copyOut">Copiar missatge</button>
@@ -275,8 +276,16 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
   </section>
 
   <section class="card">
-    <h2>2 · Enganxa les respostes</h2>
-    <p class="muted" style="margin:0 0 8px">Enganxa els missatges de WhatsApp tal qual (un o diversos alhora). El codi es detecta automàticament.</p>
+    <h2>2 · Respostes del Google Sheet</h2>
+    <p class="muted" style="margin:0 0 8px">Les respostes es guarden al teu Google Sheet. Per veure-les aquí amb noms, posa la clau d'organitzadora (només cal un cop en aquest dispositiu).</p>
+    <div class="two"><div><input type="text" id="orgKey" placeholder="Clau d'organitzadora" autocomplete="off"></div><div><button class="btn" id="loadSheet" style="width:100%">Carregar respostes</button></div></div>
+    <div id="sheetMsg" class="muted" style="margin-top:8px"></div>
+  </section>
+
+  <details class="card" style="display:block;padding:14px 18px">
+  <summary class="muted" style="cursor:pointer">Opcions extra: enganxar respostes rebudes per WhatsApp · exemple</summary>
+  <div>
+    <p class="muted" style="margin:10px 0 8px">Si algú t'ha enviat el missatge amb codi perquè no li funcionava l'enviament, enganxa'l aquí.</p>
     <textarea id="paste" placeholder="Enganxa aquí…"></textarea>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
       <button class="btn" id="addCodes">Afegir respostes</button>
@@ -284,8 +293,8 @@ footer.jp{text-align:center;color:var(--mut);font:600 14px "Shippori Mincho B1",
       <button class="btn sec" id="clearAll">Buidar</button>
     </div>
     <div id="pasteMsg" class="muted" style="margin-top:8px"></div>
-    <p class="muted" style="margin:8px 0 0">Les respostes es desen només en aquest navegador.</p>
-  </section>
+    <p class="muted" style="margin:8px 0 0">Les respostes enganxades a mà es desen només en aquest navegador.</p>
+  </div></details>
 
   <div id="results"></div>
 </div>
@@ -312,6 +321,24 @@ function copy(text){
 }
 function enc(o){var b=new TextEncoder().encode(JSON.stringify(o)),s="";for(var i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return "CR1."+btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function dec(code){var m=String(code).match(/CR1\.([A-Za-z0-9_-]+)/);if(!m)return null;try{var b=m[1].replace(/-/g,"+").replace(/_/g,"/");while(b.length%4)b+="=";var s=atob(b),u=new Uint8Array(s.length);for(var i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return JSON.parse(new TextDecoder().decode(u))}catch(e){return null}}
+
+/* ---------- Google Sheets ---------- */
+var SHEET_URL="";
+function sheetOn(){return /^https:\/\/script\.google\.com\//.test(SHEET_URL)}
+function sheetGet(params){
+  var q=Object.keys(params||{}).map(function(k){return encodeURIComponent(k)+"="+encodeURIComponent(params[k])}).join("&");
+  return fetch(SHEET_URL+(q?"?"+q:""),{method:"GET",redirect:"follow"}).then(function(r){return r.json()});
+}
+function sheetPost(obj){
+  return fetch(SHEET_URL,{method:"POST",redirect:"follow",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(obj)}).then(function(r){return r.json()});
+}
+function readableRow(o){
+  function L(g,a){return (a||[]).map(function(x){return optLabel(g,x)}).join(", ")}
+  function D(a){return (a||[]).map(function(id){return PBY[id]?PBY[id].label:id}).join(" | ")}
+  return {fam:o.f,contact:o.c,phone:o.p,adults:o.a,kids:o.k.join(", "),needs:L("needs",o.nd),diets:[L("diets",o.al),o.at].filter(Boolean).join(" · "),
+    nights:o.n?optLabel("nights",o.n):"",day:o.dy?optLabel("day",o.dy):"",ok:D(o.ok),mb:D(o.mb),travel:o.t?optLabel("travel",o.t):"",budget:o.b?optLabel("budget",o.b):"",
+    extras:L("extras",o.x),dogs:o.dg,pets:o.pt,car:o.ca?optLabel("car",o.ca):"",seats:o.se,mobility:o.mo,meals:o.me?optLabel("meals",o.me):"",helps:L("helps",o.he),comments:o.co};
+}
 
 /* ---------- calendario 2027 ---------- */
 var MES=["gener","febrer","març","abril","maig","juny","juliol","agost","setembre","octubre","novembre","desembre"];
@@ -475,9 +502,19 @@ $("#gen").addEventListener("click",function(){
   $("#formErr").innerHTML=errs.length?'<div class="err">'+errs.map(esc).join("<br>")+"</div>":"";
   if(errs.length){window.scrollTo({top:0,behavior:"smooth"});return}
   var o=buildObj();
-  $("#outTxt").value=summaryText(o);
-  $("#outBox").classList.remove("hidden");
-  $("#outBox").scrollIntoView({behavior:"smooth",block:"center"});
+  function fallback(){
+    $("#sentBox").classList.add("hidden");
+    $("#outTxt").value=summaryText(o);
+    $("#outBox").classList.remove("hidden");
+    $("#outBox").scrollIntoView({behavior:"smooth",block:"center"});
+  }
+  if(!sheetOn()){fallback();return}
+  var btn=$("#gen");btn.disabled=true;btn.textContent="Enviant…";
+  sheetPost({action:"save",o:o,row:readableRow(o)}).then(function(r){
+    if(!r||!r.ok)throw new Error("no ok");
+    $("#outBox").classList.add("hidden");$("#sentBox").classList.remove("hidden");MDATA=null;
+    $("#sentBox").scrollIntoView({behavior:"smooth",block:"center"});
+  }).catch(fallback).then(function(){btn.disabled=false;btn.textContent="Enviar la resposta"});
 });
 $("#copyOut").addEventListener("click",function(){copy($("#outTxt").value)});
 $("#outTxt").addEventListener("focus",function(e){e.target.select()});
@@ -500,6 +537,8 @@ var FAMS=store("cr1-fams")||[];
 var CHOSEN=store("cr1-chosen")||"";
 var ORG=store("cr1-org")||{name:"",deadline:"",link:""};
 function saveFams(){store("cr1-fams",FAMS)}
+function FAMS_LOCAL(){return FAMS}
+var MDATA=null;
 function normFam(o){
   if(!o||typeof o!=="object"||!o.f)return null;
   o.k=Array.isArray(o.k)?o.k:[];o.ok=Array.isArray(o.ok)?o.ok:[];o.mb=Array.isArray(o.mb)?o.mb:[];
@@ -554,10 +593,11 @@ function barsHTML(map,group,total){
 }
 function names(list){return list.map(function(f){return esc(f.f.replace(/^Fam[ií]lia\s+/i,""))}).join(", ")}
 
-function analyze(){
+function analyze(LIST){
+  LIST=LIST||FAMS;
   return PERIODS.map(function(p){
     var ok=[],mb=[],no=[];
-    FAMS.forEach(function(f){if(f.ok.indexOf(p.id)>-1)ok.push(f);else if(f.mb.indexOf(p.id)>-1)mb.push(f);else no.push(f)});
+    LIST.forEach(function(f){if(f.ok.indexOf(p.id)>-1)ok.push(f);else if(f.mb.indexOf(p.id)>-1)mb.push(f);else no.push(f)});
     return {p:p,ok:ok,mb:mb,no:no,score:ok.length*2+mb.length};
   });
 }
@@ -686,9 +726,19 @@ function bindPhase2(an){
 /* ---------- MÈTRIQUES ANÒNIMES ---------- */
 function renderMetrics(){
   var M=$("#metricsOut");
-  if(!FAMS.length){M.innerHTML='<section class="card empty"><b>Encara no hi ha respostes</b><br>Les mètriques surten de les respostes que la persona que organitza ha enganxat a la pestanya Organització, en aquest mateix dispositiu.</section>';return}
-  var n=FAMS.length,pp=peopleOf(FAMS),an=analyze();
-  var h='<section class="card"><h2>Mètriques anònimes</h2><p class="muted" style="margin:0 0 8px">Sense noms ni comentaris: només totals. Ideal per fer una captura i compartir-la al grup.</p>'
+  if(sheetOn()&&MDATA===null){
+    M.innerHTML='<section class="card empty">Carregant respostes…</section>';
+    sheetGet({action:"metrics"}).then(function(r){MDATA=(r&&r.ok&&Array.isArray(r.data))?r.data.map(normFam).filter(Boolean):[];drawMetrics()})
+      .catch(function(){M.innerHTML='<section class="card empty">No s\'han pogut carregar les respostes. Torna-ho a provar d\'aquí a una estona.</section>'});
+    return;
+  }
+  drawMetrics();
+}
+function drawMetrics(){
+  var M=$("#metricsOut"),FAMS=sheetOn()?(MDATA||[]):FAMS_LOCAL();
+  if(!FAMS.length){M.innerHTML='<section class="card empty"><b>Encara no hi ha respostes</b><br>Quan les famílies vagin responent, aquí sortiran els totals.</section>';return}
+  var n=FAMS.length,pp=peopleOf(FAMS),an=analyze(FAMS);
+  var h='<section class="card"><h2>Mètriques anònimes</h2><p class="muted" style="margin:0 0 8px">Sense noms ni comentaris: només totals. Ideal per fer una captura i compartir-la al grup.</p>'+(sheetOn()?'<p style="margin:0 0 8px"><button class="btn sec sm" id="refreshM">↻ Actualitzar</button></p>':'')
    +'<div class="stats"><div class="stat"><b>'+n+'</b><span>famílies han respost</span></div><div class="stat"><b>'+pp.t+'</b><span>persones</span></div><div class="stat"><b>'+pp.a+'</b><span>adults</span></div><div class="stat"><b>'+pp.k+'</b><span>nens/es</span></div></div>';
   var ages={"0–2":0,"3–5":0,"6–11":0,"12+":0};FAMS.forEach(function(f){f.k.forEach(function(a){ages[a<3?"0–2":a<6?"3–5":a<12?"6–11":"12+"]++})});
   if(pp.k){h+='<h3>Edats dels nens</h3>'+Object.keys(ages).map(function(k){return '<div class="bar"><span class="l">'+k+' anys</span><span class="b"><i style="width:'+Math.round(100*ages[k]/pp.k)+'%"></i></span><span class="n">'+ages[k]+'</span></div>'}).join("")}
@@ -716,6 +766,7 @@ function renderMetrics(){
    +block("Dietes (nombre de famílies)","diets",FAMS.map(function(f){return f.al}))+'</section>';
   h+='<section class="card"><h2>Compartir al grup</h2><p class="muted" style="margin:0 0 8px">Resum en text, sense noms, per enganxar al WhatsApp.</p><button class="btn" id="copyMetrics">Copiar resum anònim</button></section>';
   M.innerHTML=h;
+  var rb=$("#refreshM");if(rb)rb.addEventListener("click",function(){MDATA=null;renderMetrics()});
   $("#copyMetrics").addEventListener("click",function(){
     var L=["🏡 Pitxi Escapada Rural 2027 · com anem","✅ "+n+" famílies han respost ("+pp.t+" persones: "+pp.a+" adults i "+pp.k+" nens)",""];
     if(ranked.length){L.push("📅 Dates amb més suport:");ranked.slice(0,5).forEach(function(r){L.push("· "+r.p.label+(r.p.special?" 🌸":"")+": "+r.ok.length+" ✓"+(r.mb.length?" / "+r.mb.length+" ~":""))});L.push("")}
@@ -727,6 +778,22 @@ function renderMetrics(){
     copy(L.join("\n")+pend);
   });
 }
+
+/* ---------- carregar del Sheet ---------- */
+(function(){
+  var k=store("cr1-key");if(k)$("#orgKey").value=k;
+  if(!sheetOn()){$("#sheetMsg").textContent="(Google Sheet encara no connectat)";$("#loadSheet").disabled=true}
+  $("#loadSheet").addEventListener("click",function(){
+    var key=$("#orgKey").value.trim();if(!key){$("#sheetMsg").textContent="Escriu la clau.";return}
+    store("cr1-key",key);$("#sheetMsg").textContent="Carregant…";
+    sheetGet({action:"all",key:key}).then(function(r){
+      if(!r||!r.ok){$("#sheetMsg").textContent=(r&&r.error==="key")?"Clau incorrecta.":"No s'han pogut carregar.";return}
+      var list=r.data.map(normFam).filter(Boolean);
+      FAMS=list;saveFams();renderPanel();
+      $("#sheetMsg").textContent=list.length+" resposta/es carregada/es del Google Sheet ✓";
+    }).catch(function(){$("#sheetMsg").textContent="No s'han pogut carregar. Revisa la connexió."});
+  });
+})();
 
 /* ---------- eventos panel ---------- */
 $("#results").addEventListener("click",function(e){
@@ -741,7 +808,7 @@ $("#copyInvite").addEventListener("click",function(){
   var dl="";
   if(ORG.deadline){var p=ORG.deadline.split("-");if(p.length===3){var mn=MES[parseInt(p[1],10)-1];dl=parseInt(p[2],10)+(/^[aeiou]/.test(mn)?" d'":" de ")+mn}}
   var t="Hola a tots! 🏡\nVolem muntar una escapada a una casa rural amb les famílies del grup el 2027. Per trobar data i casa que ens encaixi a tots, ompliu aquesta enquesta (3 minuts, una per família):\n\n"
-    +(ORG.link||"[enllaç]")+"\n\nAl final us genera un missatge amb un codi: copieu-lo i envieu-me\'l per WhatsApp."
+    +(ORG.link||"[enllaç]")+"\n\nAl final premeu Enviar i ja està."
     +(dl?"\n\n⏰ Us demano que respongueu abans del "+dl+".":"")
     +"\n\nQuan tinguem data, ens posem amb la casa. Gràcies!"+(ORG.name?"\n— "+ORG.name:"");
   copy(t);
