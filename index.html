@@ -327,7 +327,7 @@ var SPECIAL=[
  {id:"pg",s:[5,14],e:[5,17],tag:"Dilluns de Pasqua Granada (festiu només en alguns municipis)"},
  {id:"sj",s:[6,24],e:[6,27],tag:"Pont de Sant Joan · dijous festiu"}
 ];
-var TAGS={"0101":"Cap d\'Any (divendres festiu)"};
+var TAGS={};
 var PERIODS=(function(){
   var out=[],i,sp;
   for(i=0;i<SPECIAL.length;i++){sp=SPECIAL[i];out.push({id:sp.id,a:D(sp.s[0],sp.s[1]),b:D(sp.e[0],sp.e[1]),tag:sp.tag,special:true})}
@@ -640,7 +640,8 @@ function phase2HTML(an){
   var dys=count(att.map(function(f){return f.dy?[f.dy]:[]})),dTop=Object.keys(dys).sort(function(a,b){return dys[b]-dys[a]})[0];
   if(dTop)brief.push("Dia preferit: "+optLabel("day",dTop));
   brief.push("Famílies: "+att.length+" · Persones: "+pp.t+" ("+pp.a+" adults, "+pp.k+" nens"+(pp.b?", "+pp.b+" menors de 3":"")+")");
-  brief.push("Dormitoris: mínim "+att.length+" (un per família) · Places: "+pp.t+" + marge");
+  if(nTop==="0")brief.push("Només per passar el dia (sense dormir): espai i taula per a "+pp.t+" persones");
+  else brief.push("Dormitoris: mínim "+att.length+" (un per família) · Places: "+pp.t+" + marge");
   if(cunas||tronas)brief.push("Cunes: "+cunas+" · Trones: "+tronas);
   brief.push("Gossos: "+dogs+(dogs?" (la casa els ha d\'admetre)":""));
   if(znTop.length)brief.push("Zones: "+znTop.map(function(z){return optLabel("zones",z)}).join("; "));
